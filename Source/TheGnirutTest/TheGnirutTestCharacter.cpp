@@ -34,7 +34,7 @@ ATheGnirutTestCharacter::ATheGnirutTestCharacter()
 	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
-	GetCharacterMovement()->MaxWalkSpeed = 500.f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
@@ -86,6 +86,10 @@ void ATheGnirutTestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATheGnirutTestCharacter::Look);
+
+		// Running
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &ATheGnirutTestCharacter::Run);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &ATheGnirutTestCharacter::StopRunning);
 	}
 	else
 	{
@@ -126,5 +130,19 @@ void ATheGnirutTestCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ATheGnirutTestCharacter::Run(const FInputActionValue& Value)
+{
+	if (Controller != nullptr) {
+		GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
+	}
+}
+
+void ATheGnirutTestCharacter::StopRunning(const FInputActionValue& Value)
+{
+	if (Controller != nullptr) {
+		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 	}
 }

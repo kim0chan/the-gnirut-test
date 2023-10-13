@@ -44,6 +44,14 @@ class ATheGnirutTestCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
 
+	/** Run Input Action*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* RunAction;
+
+private:
+	const float WalkingSpeed = 250.0f;
+	const float RunningSpeed = 500.0f;
+
 public:
 	ATheGnirutTestCharacter();
 	
@@ -55,6 +63,10 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void Run(const FInputActionValue& Value);
+
+	void StopRunning(const FInputActionValue& Value);
 			
 
 protected:
