@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "GnirutAnimInstance.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
+
 /**
  * 
  */
@@ -18,6 +20,10 @@ public:
 	UGnirutAnimInstance();
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	void PlayAttackMontage();
+
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
 
 private:
 
@@ -39,4 +45,11 @@ private:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool ShouldMove;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	class UAnimMontage* AnimMontage;
+
+	UFUNCTION()
+	void AnimNotify_AttackHitCheck();
+
 };

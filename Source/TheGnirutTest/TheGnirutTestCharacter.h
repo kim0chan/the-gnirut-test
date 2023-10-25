@@ -48,6 +48,10 @@ class ATheGnirutTestCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* RunAction;
 
+	/** Attack Input Action*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* AttackAction;
+
 private:
 	const float WalkingSpeed = 250.0f;
 	const float RunningSpeed = 500.0f;
@@ -67,12 +71,25 @@ protected:
 	void Run(const FInputActionValue& Value);
 
 	void StopRunning(const FInputActionValue& Value);
-			
+
+	void Attack();
+
+	UFUNCTION()
+	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	bool IsAttacking;
+
+	UPROPERTY()
+	class UGnirutAnimInstance* AnimInstance;
+
 
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
+	virtual void PostInitializeComponents() override;
+
 	// To add mapping context
 	virtual void BeginPlay();
 

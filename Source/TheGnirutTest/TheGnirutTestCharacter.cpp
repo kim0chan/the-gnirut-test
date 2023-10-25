@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "GnirutAnimInstance.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -52,6 +53,18 @@ ATheGnirutTestCharacter::ATheGnirutTestCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+
+	IsAttacking = false;
+}
+
+void ATheGnirutTestCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	AnimInstance = Cast<UGnirutAnimInstance>(GetMesh()->GetAnimInstance());
+	if (AnimInstance) 
+	{
+		AnimInstance->OnMontageEnded.AddDynamic(this, &ATheGnirutTestCharacter::OnAttackMontageEnded);
+	}
 }
 
 void ATheGnirutTestCharacter::BeginPlay()
@@ -90,6 +103,9 @@ void ATheGnirutTestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		// Running
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &ATheGnirutTestCharacter::Run);
 		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &ATheGnirutTestCharacter::StopRunning);
+	
+		// Attacking
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ATheGnirutTestCharacter::Attack);
 	}
 	else
 	{
@@ -145,4 +161,17 @@ void ATheGnirutTestCharacter::StopRunning(const FInputActionValue& Value)
 	if (Controller != nullptr) {
 		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 	}
+}
+
+void ATheGnirutTestCharacter::Attack()
+{
+	if (!IsAttacking) {
+		AnimInstance->PlayAttackMontage();
+		IsAttacking = true;
+	}
+}
+
+void ATheGnirutTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsAttacking = false;
 }

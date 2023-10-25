@@ -14,6 +14,12 @@ UGnirutAnimInstance::UGnirutAnimInstance()
 	GroundSpeed = 0.0f;
 	IsFalling = false;
 	ShouldMove = false;
+
+	static ConstructorHelpers::FObjectFinder <UAnimMontage> ANIM_MONTAGE
+	(TEXT("/Game/Characters/Mannequins/Animations/AM_GnirutCharacter.AM_GnirutCharacter"));
+
+	if (ANIM_MONTAGE.Succeeded())
+		AnimMontage = ANIM_MONTAGE.Object;
 }
 
 void UGnirutAnimInstance::NativeInitializeAnimation()
@@ -36,5 +42,16 @@ void UGnirutAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		ShouldMove = MovementComponent->GetCurrentAcceleration() != FVector(0, 0, 0) && GroundSpeed > 3.0;
 		IsFalling = MovementComponent->IsFalling();		
 	}
+}
+
+void UGnirutAnimInstance::PlayAttackMontage()
+{
+	Montage_Play(AnimMontage, 1.5f);
+}
+
+void UGnirutAnimInstance::AnimNotify_AttackHitCheck()
+{
+	// Broadcast - run all function in delegate
+	OnAttackHitCheck.Broadcast();
 }
 
