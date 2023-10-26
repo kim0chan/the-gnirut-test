@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "GnirutAnimInstance.h"
+#include "DrawDebugHelpers.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -55,7 +56,7 @@ ATheGnirutTestCharacter::ATheGnirutTestCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	IsAttacking = false;
-	AttackRange = 200.0f;
+	AttackRange = 60.0f;
 	AttackRadius = 50.0f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("GnirutCharacter"));
@@ -199,6 +200,27 @@ void ATheGnirutTestCharacter::AttackCheck()
 		FCollisionShape::MakeSphere(AttackRadius),
 		Params
 	);
+
+#if ENABLE_DRAW_DEBUG
+	FVector TraceVec = GetActorForwardVector() * AttackRange;
+	FVector Center = GetActorLocation() + TraceVec * 0.5f;
+	float HalfHeight = AttackRange * 0.5f + AttackRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 3.0f;
+
+	DrawDebugCapsule
+	(
+		GetWorld(),
+		Center,
+		HalfHeight,
+		AttackRadius,
+		CapsuleRot,
+		DrawColor,
+		false,
+		DebugLifeTime
+	);
+#endif
 
 	if (bResult)
 	{
