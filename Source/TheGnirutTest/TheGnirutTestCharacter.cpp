@@ -55,6 +55,10 @@ ATheGnirutTestCharacter::ATheGnirutTestCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	IsAttacking = false;
+	AttackRange = 200.0f;
+	AttackRadius = 50.0f;
+
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("GnirutCharacter"));
 }
 
 void ATheGnirutTestCharacter::PostInitializeComponents()
@@ -64,6 +68,7 @@ void ATheGnirutTestCharacter::PostInitializeComponents()
 	if (AnimInstance) 
 	{
 		AnimInstance->OnMontageEnded.AddDynamic(this, &ATheGnirutTestCharacter::OnAttackMontageEnded);
+		AnimInstance->OnAttackHitCheck.AddUObject(this, &ATheGnirutTestCharacter::AttackCheck);
 	}
 }
 
@@ -168,6 +173,43 @@ void ATheGnirutTestCharacter::Attack()
 	if (!IsAttacking) {
 		AnimInstance->PlayAttackMontage();
 		IsAttacking = true;
+	}
+}
+
+void ATheGnirutTestCharacter::Dying()
+{
+	AnimInstance->SetDead();
+	SetActorEnableCollision(false);
+
+	// TODO: Add additional process for Dying
+	// - Disconnect with PlayerController , ...
+}
+
+void ATheGnirutTestCharacter::AttackCheck()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	bool bResult = GetWorld()->SweepSingleByChannel
+	(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation() + GetActorForwardVector() * AttackRange,
+		FQuat::Identity,
+		ECollisionChannel::ECC_GameTraceChannel2,
+		FCollisionShape::MakeSphere(AttackRadius),
+		Params
+	);
+
+	if (bResult)
+	{
+		if (HitResult.GetActor()->IsValidLowLevel())
+		{
+			ATheGnirutTestCharacter* TargetCharacter = Cast<ATheGnirutTestCharacter>(HitResult.GetActor());
+			if (TargetCharacter)
+			{
+				TargetCharacter->Dying();
+			}
+		}
 	}
 }
 

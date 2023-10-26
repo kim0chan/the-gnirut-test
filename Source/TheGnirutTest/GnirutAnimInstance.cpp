@@ -14,6 +14,7 @@ UGnirutAnimInstance::UGnirutAnimInstance()
 	GroundSpeed = 0.0f;
 	IsFalling = false;
 	ShouldMove = false;
+	IsDead = false;
 
 	static ConstructorHelpers::FObjectFinder <UAnimMontage> ANIM_MONTAGE
 	(TEXT("/Game/Characters/Mannequins/Animations/AM_GnirutCharacter.AM_GnirutCharacter"));
@@ -47,6 +48,11 @@ void UGnirutAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 void UGnirutAnimInstance::PlayAttackMontage()
 {
 	Montage_Play(AnimMontage, 1.5f);
+}
+
+void UGnirutAnimInstance::SetDead()
+{
+	IsDead = true;
 }
 
 void UGnirutAnimInstance::AnimNotify_AttackHitCheck()

@@ -52,6 +52,14 @@ class ATheGnirutTestCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
 
+	void AttackCheck();
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float AttackRange;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
+	float AttackRadius;
+
 private:
 	const float WalkingSpeed = 250.0f;
 	const float RunningSpeed = 500.0f;
@@ -73,6 +81,8 @@ protected:
 	void StopRunning(const FInputActionValue& Value);
 
 	void Attack();
+	
+	void Dying();
 
 	UFUNCTION()
 	void OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted);
