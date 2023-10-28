@@ -179,11 +179,14 @@ void ATheGnirutTestCharacter::Attack()
 
 void ATheGnirutTestCharacter::Dying()
 {
+	AController* CharacterController = GetController();
+	if (CharacterController)
+	{
+		CharacterController->UnPossess();
+	}
+
 	AnimInstance->SetDead();
 	SetActorEnableCollision(false);
-
-	// TODO: Add additional process for Dying
-	// - Disconnect with PlayerController , ...
 }
 
 void ATheGnirutTestCharacter::AttackCheck()
