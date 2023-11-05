@@ -23,6 +23,7 @@ class ATheGnirutTestCharacter : public ACharacter
 public:
 	ATheGnirutTestCharacter();
 
+	UFUNCTION(NetMulticast, Reliable)
 	void Dying();
 
 protected:

@@ -69,12 +69,34 @@ protected:
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 
+	UFUNCTION()
 	void Run(const FInputActionValue& Value);
 
+	UFUNCTION(Server, Reliable)
+	void ServerRun();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRun();
+
+	UFUNCTION()
 	void StopRunning(const FInputActionValue& Value);
 
+	UFUNCTION(Server, Reliable)
+	void ServerStopRunning();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastStopRunning();
+
+	UFUNCTION()
 	void Attack();
 
+	UFUNCTION(Server, Reliable)
+	void ServerAttack();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastAttack();
+
+	UFUNCTION()
 	void AttackCheck();
 
 	UFUNCTION()

@@ -122,6 +122,16 @@ void AGnirutHumanPlayer::Look(const FInputActionValue& Value)
 
 void AGnirutHumanPlayer::Run(const FInputActionValue& Value)
 {
+	ServerRun();
+}
+
+void AGnirutHumanPlayer::ServerRun_Implementation()
+{
+	MulticastRun();
+}
+
+void AGnirutHumanPlayer::MulticastRun_Implementation()
+{
 	if (Controller != nullptr) {
 		GetCharacterMovement()->MaxWalkSpeed = RunningSpeed;
 	}
@@ -129,12 +139,32 @@ void AGnirutHumanPlayer::Run(const FInputActionValue& Value)
 
 void AGnirutHumanPlayer::StopRunning(const FInputActionValue& Value)
 {
+	ServerStopRunning();
+}
+
+void AGnirutHumanPlayer::ServerStopRunning_Implementation()
+{
+	MulticastStopRunning();
+}
+
+void AGnirutHumanPlayer::MulticastStopRunning_Implementation() 
+{
 	if (Controller != nullptr) {
 		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 	}
 }
 
 void AGnirutHumanPlayer::Attack()
+{
+	ServerAttack();
+}
+
+void AGnirutHumanPlayer::ServerAttack_Implementation()
+{
+	MulticastAttack();
+}
+
+void AGnirutHumanPlayer::MulticastAttack_Implementation()
 {
 	if (!IsAttacking) {
 		AnimInstance->PlayAttackMontage();
@@ -144,6 +174,8 @@ void AGnirutHumanPlayer::Attack()
 
 void AGnirutHumanPlayer::AttackCheck()
 {
+	if (!HasAuthority()) return;
+
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->SweepSingleByChannel
@@ -152,7 +184,7 @@ void AGnirutHumanPlayer::AttackCheck()
 		GetActorLocation(),
 		GetActorLocation() + GetActorForwardVector() * AttackRange,
 		FQuat::Identity,
-		ECollisionChannel::ECC_GameTraceChannel2,
+		ECollisionChannel::ECC_Visibility,
 		FCollisionShape::MakeSphere(AttackRadius),
 		Params
 	);
@@ -180,7 +212,7 @@ void AGnirutHumanPlayer::AttackCheck()
 
 	if (bResult)
 	{
-		if (HitResult.GetActor()->IsValidLowLevel())
+		if (HitResult.GetActor())
 		{
 			ATheGnirutTestCharacter* TargetCharacter = Cast<ATheGnirutTestCharacter>(HitResult.GetActor());
 			if (TargetCharacter)

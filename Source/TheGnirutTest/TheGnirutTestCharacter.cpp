@@ -44,7 +44,7 @@ void ATheGnirutTestCharacter::PostInitializeComponents()
 	AnimInstance = Cast<UGnirutAnimInstance>(GetMesh()->GetAnimInstance());
 }
 
-void ATheGnirutTestCharacter::Dying()
+void ATheGnirutTestCharacter::Dying_Implementation()
 {
 	AController* CharacterController = GetController();
 	if (CharacterController)
@@ -53,5 +53,5 @@ void ATheGnirutTestCharacter::Dying()
 	}
 
 	AnimInstance->SetDead();
-	SetActorEnableCollision(false);
+	//SetActorEnableCollision(false);
 }
