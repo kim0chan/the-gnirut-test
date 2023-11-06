@@ -5,6 +5,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GnirutAnimInstance.h"
+#include "GnirutHumanPlayer.h"
+#include "TheGnirutTestGameMode.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -53,5 +55,19 @@ void ATheGnirutTestCharacter::Dying_Implementation()
 	}
 
 	AnimInstance->SetDead();
+
+	// TODO: need to fix Bug. 
+	// If enable the following line, the Character fall through the floor...
 	//SetActorEnableCollision(false);
+
+	if (!HasAuthority()) return;
+	AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(this);
+	if (HumanPlayer)
+	{
+		ATheGnirutTestGameMode* GameMode = Cast<ATheGnirutTestGameMode>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			GameMode->DecrementAliveGnirutHumanPlayers();
+		}
+	}
 }

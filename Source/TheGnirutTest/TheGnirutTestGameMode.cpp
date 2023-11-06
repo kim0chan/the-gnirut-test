@@ -12,4 +12,26 @@ ATheGnirutTestGameMode::ATheGnirutTestGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_GnirutPlayerController"));
+	if (PlayerControllerBPClass.Class != NULL)
+	{
+		PlayerControllerClass = PlayerControllerBPClass.Class;
+	}
+}
+
+void ATheGnirutTestGameMode::DecrementAliveGnirutHumanPlayers()
+{
+	NumAliveGnirutHumanPlayers--;
+	CheckGameEnd();
+}
+
+void ATheGnirutTestGameMode::CheckGameEnd()
+{
+	UE_LOG(LogTemp, Display, TEXT("%d"), NumAliveGnirutHumanPlayers);
+	if (NumAliveGnirutHumanPlayers <= 1)
+	{
+		UE_LOG(LogTemp, Display, TEXT("GAME END!"));
+	}
+
 }
