@@ -7,6 +7,7 @@
 #include "GnirutAnimInstance.h"
 #include "GnirutHumanPlayer.h"
 #include "TheGnirutTestGameMode.h"
+#include "TheGnirutTestGameState.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -62,12 +63,13 @@ void ATheGnirutTestCharacter::Dying_Implementation()
 
 	if (!HasAuthority()) return;
 	AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(this);
+	ATheGnirutTestGameState* GnirutGameState = GetWorld()->GetGameState<ATheGnirutTestGameState>();
+	if (!GnirutGameState)	return;
 	if (HumanPlayer)
 	{
-		ATheGnirutTestGameMode* GameMode = Cast<ATheGnirutTestGameMode>(GetWorld()->GetAuthGameMode());
-		if (GameMode)
-		{
-			GameMode->DecrementAliveGnirutHumanPlayers();
-		}
+		GnirutGameState->DecrementPlayerCounts_Implementation(false);
+	}
+	else {
+		GnirutGameState->DecrementPlayerCounts_Implementation(true);
 	}
 }

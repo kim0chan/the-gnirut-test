@@ -24,7 +24,7 @@ public:
 	ATheGnirutTestCharacter();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Dying();
+	virtual void Dying();
 
 protected:
 	const float WalkingSpeed = 250.0f;

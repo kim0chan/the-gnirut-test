@@ -2,10 +2,12 @@
 
 #include "TheGnirutTestGameMode.h"
 #include "TheGnirutTestCharacter.h"
+#include "TheGnirutTestGameState.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Kismet/GameplayStatics.h"
 
 ATheGnirutTestGameMode::ATheGnirutTestGameMode()
-{
+{	
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_GnirutHumanPlayer"));
 	if (PlayerPawnBPClass.Class != NULL)
@@ -18,20 +20,32 @@ ATheGnirutTestGameMode::ATheGnirutTestGameMode()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
+
+	GameStateClass = ATheGnirutTestGameState::StaticClass();
 }
 
-void ATheGnirutTestGameMode::DecrementAliveGnirutHumanPlayers()
+int32 ATheGnirutTestGameMode::GetCurrentPlayerCount()
 {
-	NumAliveGnirutHumanPlayers--;
-	CheckGameEnd();
+	return GetNumPlayers();
 }
 
-void ATheGnirutTestGameMode::CheckGameEnd()
+void ATheGnirutTestGameMode::StartPlay()
 {
-	UE_LOG(LogTemp, Display, TEXT("%d"), NumAliveGnirutHumanPlayers);
-	if (NumAliveGnirutHumanPlayers <= 1)
-	{
-		UE_LOG(LogTemp, Display, TEXT("GAME END!"));
-	}
+	Super::StartPlay();
 
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("AI"), Actors);
+	// UE_LOG(LogTemp, Warning, TEXT("There are %d AI player(s)"), Actors.Num() - 1);
+	// UE_LOG(LogTemp, Warning, TEXT("There are %d Human player(s)"), GetCurrentPlayerCount());
+
+	ATheGnirutTestGameState* GnirutGameState = GetGameState<ATheGnirutTestGameState>();
+	GnirutGameState->InitPlayerCounts_Implementation(Actors.Num() - 1, GetCurrentPlayerCount());
+}
+
+void ATheGnirutTestGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+
+	ATheGnirutTestGameState* GnirutGameState = GetGameState<ATheGnirutTestGameState>();
+	GnirutGameState->PlayerLogin_Implementation();
 }

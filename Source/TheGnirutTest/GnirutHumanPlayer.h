@@ -58,6 +58,7 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public ATheGnirutTestCharacter
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	float AttackRadius;
 
+
 public:
 	AGnirutHumanPlayer();
 

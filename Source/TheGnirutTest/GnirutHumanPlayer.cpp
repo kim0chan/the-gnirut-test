@@ -11,6 +11,7 @@
 #include "InputActionValue.h"
 #include "GnirutAnimInstance.h"
 #include "DrawDebugHelpers.h"
+#include "TheGnirutTestGameState.h"
 
 AGnirutHumanPlayer::AGnirutHumanPlayer()
 {
