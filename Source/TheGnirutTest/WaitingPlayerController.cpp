@@ -3,6 +3,7 @@
 
 #include "WaitingPlayerController.h"
 #include "WaitingPlayerHUD.h"
+#include "WaitingGameState.h"
 #include "Blueprint/UserWidget.h"
 
 AWaitingPlayerController::AWaitingPlayerController()
@@ -19,11 +20,26 @@ void AWaitingPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if(IsLocalController())	CreatePlayerHUD();
+}
+
+void AWaitingPlayerController::CreatePlayerHUD() {
 	if (PlayerHUDClass)
 	{
 		PlayerHUD = CreateWidget<UWaitingPlayerHUD>(this, PlayerHUDClass);
 		if (PlayerHUD) {
-			PlayerHUD->AddToViewport();
+			PlayerHUD->AddToPlayerScreen();
+			UE_LOG(LogTemp, Display, TEXT("AddToPlayerScreen"));
+		}
+
+		UWorld* world = GetWorld();
+		if (world)
+		{
+			AWaitingGameState* WGS = Cast<AWaitingGameState>(world->GetGameState());
+			if (WGS)
+			{
+				WGS->UpdatePlayerList();
+			}
 		}
 	}
 }

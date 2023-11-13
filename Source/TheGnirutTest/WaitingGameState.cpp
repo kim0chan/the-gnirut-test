@@ -21,14 +21,6 @@ bool AWaitingGameState::isAllPlayersReady()
 	return true;
 }
 
-void AWaitingGameState::UpdatePlayerList()
-{
-	AllPlayerStates.Empty();
-	for (APlayerState* PS : PlayerArray) {
-		AllPlayerStates.Add(PS);
-	}
-}
-
 void AWaitingGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -36,7 +28,24 @@ void AWaitingGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& 
 	DOREPLIFETIME(AWaitingGameState, AllPlayerStates);
 }
 
+void AWaitingGameState::UpdateAllPlayerStates()
+{
+	AllPlayerStates.Empty();
+	for (APlayerState* PS : PlayerArray) {
+		AllPlayerStates.Add(PS);
+	}
+
+	// for server
+	UpdatePlayerList();
+}
+
 void AWaitingGameState::OnRep_AllPlayerState()
+{
+	// for client
+	UpdatePlayerList();
+}
+
+void AWaitingGameState::UpdatePlayerList()
 {
 	UWorld* world = GetWorld();
 	if (world)

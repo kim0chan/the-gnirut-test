@@ -21,6 +21,8 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	void UpdateAllPlayerStates();
+
 	UFUNCTION()
 	void OnRep_AllPlayerState();
 

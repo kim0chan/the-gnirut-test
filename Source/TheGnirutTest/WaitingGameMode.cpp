@@ -32,7 +32,7 @@ void AWaitingGameMode::UpdatePlayerList()
 	AWaitingGameState* WGS = Cast<AWaitingGameState>(GameState);
 	if (WGS)
 	{
-		WGS->UpdatePlayerList();
+		WGS->UpdateAllPlayerStates();
 	}
 	
 }
