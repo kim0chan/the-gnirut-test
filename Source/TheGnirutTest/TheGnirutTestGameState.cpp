@@ -56,3 +56,11 @@ void ATheGnirutTestGameState::GetLifetimeReplicatedProps(TArray< FLifetimeProper
 	DOREPLIFETIME_CONDITION(ATheGnirutTestGameState, NumberOfAIPlayers, COND_None);
 	DOREPLIFETIME_CONDITION(ATheGnirutTestGameState, NumberOfHumanPlayers, COND_None);
 }
+
+int32 ATheGnirutTestGameState::GetNumberOfHumanPlayers() {
+	return NumberOfHumanPlayers;
+}
+int32 ATheGnirutTestGameState::GetNumberOfAIPlayers() {
+	return NumberOfAIPlayers;
+}
+

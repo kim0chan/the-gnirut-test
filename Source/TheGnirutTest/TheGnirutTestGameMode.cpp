@@ -3,6 +3,7 @@
 #include "TheGnirutTestGameMode.h"
 #include "TheGnirutTestCharacter.h"
 #include "TheGnirutTestGameState.h"
+#include "GnirutPlayerState.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -22,6 +23,7 @@ ATheGnirutTestGameMode::ATheGnirutTestGameMode()
 	}
 
 	GameStateClass = ATheGnirutTestGameState::StaticClass();
+	PlayerStateClass = AGnirutPlayerState::StaticClass();
 }
 
 int32 ATheGnirutTestGameMode::GetCurrentPlayerCount()
@@ -48,4 +50,12 @@ void ATheGnirutTestGameMode::PostLogin(APlayerController* NewPlayer)
 
 	ATheGnirutTestGameState* GnirutGameState = GetGameState<ATheGnirutTestGameState>();
 	GnirutGameState->PlayerLogin_Implementation();
+
+	AGnirutPlayerState* GnirutPlayerState = Cast<AGnirutPlayerState>(NewPlayer->PlayerState);
+	if (GnirutPlayerState)
+	{
+		GnirutPlayerState->SetPlayerIndex(GnirutGameState->GetNumberOfHumanPlayers());
+		FString NewNickName = FString::Printf(TEXT("Player %d"), GnirutPlayerState->GetPlayerIndex());
+		GnirutPlayerState->SetPlayerNickName(NewNickName);
+	}
 }

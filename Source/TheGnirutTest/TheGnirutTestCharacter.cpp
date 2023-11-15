@@ -17,7 +17,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 ATheGnirutTestCharacter::ATheGnirutTestCharacter()
 {
 	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -47,29 +47,32 @@ void ATheGnirutTestCharacter::PostInitializeComponents()
 	AnimInstance = Cast<UGnirutAnimInstance>(GetMesh()->GetAnimInstance());
 }
 
-void ATheGnirutTestCharacter::Dying_Implementation()
+void ATheGnirutTestCharacter::Dying()
 {
 	AController* CharacterController = GetController();
 	if (CharacterController)
 	{
 		CharacterController->UnPossess();
 	}
-
-	AnimInstance->SetDead();
-
 	// TODO: need to fix Bug. 
 	// If enable the following line, the Character fall through the floor...
 	//SetActorEnableCollision(false);
+	ServerDying();
+}
 
-	if (!HasAuthority()) return;
+void ATheGnirutTestCharacter::ServerDying_Implementation()
+{
+	MulticastDying();
+}
+
+void ATheGnirutTestCharacter::MulticastDying_Implementation()
+{
+	AnimInstance->SetDead();
+	GetCapsuleComponent()->DestroyComponent();
+	UE_LOG(LogTemp, Display, TEXT("[Character] Disable Collision"));
+	if (!HasAuthority())	return;
 	AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(this);
 	ATheGnirutTestGameState* GnirutGameState = GetWorld()->GetGameState<ATheGnirutTestGameState>();
 	if (!GnirutGameState)	return;
-	if (HumanPlayer)
-	{
-		GnirutGameState->DecrementPlayerCounts_Implementation(false);
-	}
-	else {
-		GnirutGameState->DecrementPlayerCounts_Implementation(true);
-	}
+	GnirutGameState->DecrementPlayerCounts_Implementation(!HumanPlayer);
 }

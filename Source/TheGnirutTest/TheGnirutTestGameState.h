@@ -39,6 +39,9 @@ public:
 	void PlayerLogin();
 	void PlayerLogin_Implementation();
 
+	int32 GetNumberOfHumanPlayers();
+	int32 GetNumberOfAIPlayers();
+
 
 protected:
 	// Replicated 변수 초기화

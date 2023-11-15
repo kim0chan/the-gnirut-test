@@ -22,9 +22,17 @@ class ATheGnirutTestCharacter : public ACharacter
 
 public:
 	ATheGnirutTestCharacter();
+	
+	UFUNCTION()
+	virtual void Dying();
+
+	UFUNCTION(Server, Reliable)
+	virtual void ServerDying();
+	virtual void ServerDying_Implementation();
 
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void Dying();
+	virtual void MulticastDying();
+	virtual void MulticastDying_Implementation();
 
 protected:
 	const float WalkingSpeed = 250.0f;
@@ -32,10 +40,5 @@ protected:
 
 	UPROPERTY()
 	class UGnirutAnimInstance* AnimInstance;
-
-protected:
-
 	virtual void PostInitializeComponents() override;
-
 };
-
