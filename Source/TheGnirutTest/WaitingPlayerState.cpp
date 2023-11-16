@@ -2,12 +2,21 @@
 
 
 #include "WaitingPlayerState.h"
+#include "WaitingGameMode.h"
 #include "PlayerList.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 bool AWaitingPlayerState::isReady()
 {
 	return bIsReady;
+}
+
+void AWaitingPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AWaitingPlayerState, bIsReady);
 }
 
 void AWaitingPlayerState::reverseIsReady()
@@ -17,12 +26,17 @@ void AWaitingPlayerState::reverseIsReady()
 
 void AWaitingPlayerState::ServerReverseIsReady_Implementation()
 {
-	MulticastReverseIsReady();
+	bIsReady = !bIsReady;
+	UpdatePlayerReady();	
 }
 
-void AWaitingPlayerState::MulticastReverseIsReady_Implementation()
+void AWaitingPlayerState::OnRep_ReverseIsReady()
 {
-	bIsReady = !bIsReady;
+	UpdatePlayerReady();
+}
+
+void AWaitingPlayerState::UpdatePlayerReady()
+{
 	UWorld* world = GetWorld();
 	if (world)
 	{
@@ -35,6 +49,15 @@ void AWaitingPlayerState::MulticastReverseIsReady_Implementation()
 			if (UPL)
 			{
 				UPL->UpdatePlayerReady(GetPlayerId(), bIsReady);
+			}
+		}
+
+		if (HasAuthority()) 
+		{
+			AWaitingGameMode* WGM = Cast<AWaitingGameMode>(world->GetAuthGameMode());
+			if (WGM)
+			{
+				WGM->CheckToTravelMainGame();
 			}
 		}
 	}

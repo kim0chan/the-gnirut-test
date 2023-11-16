@@ -30,6 +30,9 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UEditableTextBox* JoinAddressEditableTextBox;
 
+	//UFUNCTION()
+	//void OnPlayerNameEditableTextBoxCommited(const FText& Text, ETextCommit::Type CommitMethod);
+
 	UFUNCTION()
 	void OnHostServerButtonClicked();
 

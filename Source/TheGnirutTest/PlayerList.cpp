@@ -16,7 +16,7 @@ void UPlayerList::UpdatePlayerList()
 		if (WGS)
 		{
 			PlayerScrollBox->ClearChildren();
-			for (APlayerState* PS : WGS->PlayerArray)
+			for (APlayerState* PS : WGS->AllPlayerStates)
 			{
 				AWaitingPlayerState* WPS = Cast<AWaitingPlayerState>(PS);
 				if (WPS)

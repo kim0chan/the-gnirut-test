@@ -18,13 +18,17 @@ public:
 	bool isReady();
 	void reverseIsReady();
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 protected:
 	UFUNCTION(Server, Unreliable)
 	void ServerReverseIsReady();
 
-	UFUNCTION(NetMulticast, Unreliable)
-	void MulticastReverseIsReady();
+	UFUNCTION()
+	void OnRep_ReverseIsReady();
 
+	void UpdatePlayerReady();
+
+	UPROPERTY(ReplicatedUsing = OnRep_ReverseIsReady)
 	bool bIsReady = false;
 };

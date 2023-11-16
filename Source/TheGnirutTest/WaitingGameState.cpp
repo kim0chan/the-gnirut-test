@@ -9,7 +9,7 @@
 
 bool AWaitingGameState::isAllPlayersReady()
 {
-	for (APlayerState* PS : PlayerArray)
+	for (APlayerState* PS : AllPlayerStates)
 	{
 		AWaitingPlayerState* WPS = Cast<AWaitingPlayerState>(PS);
 		if (WPS && !WPS->isReady())

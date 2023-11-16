@@ -21,6 +21,8 @@ public:
 
 	void UpdatePlayerList();
 
+	void CheckToTravelMainGame();
+
 	void TravelToMainGame();
 	
 };

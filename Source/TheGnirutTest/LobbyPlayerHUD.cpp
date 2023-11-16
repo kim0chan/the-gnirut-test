@@ -5,6 +5,7 @@
 #include "LobbyPlayerController.h"
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
+//#include "GameFramework/PlayerState.h"
 
 void ULobbyPlayerHUD::NativeConstruct()
 {
@@ -12,9 +13,19 @@ void ULobbyPlayerHUD::NativeConstruct()
 
 	HostServerButton->OnClicked.AddDynamic(this, &ThisClass::OnHostServerButtonClicked);
 	JoinServerButton->OnClicked.AddDynamic(this, &ThisClass::OnJoinServerButtonClicked);
+	//PlayerNameEditableTextBox->OnTextCommitted.AddDynamic(this, &ThisClass::OnPlayerNameEditableTextBoxCommited);
 	JoinAddressEditableTextBox->SetHintText(FText::FromString("IP address to join in"));
 	JoinAddressEditableTextBox->SetText(FText::FromString("127.0.0.1"));
 }
+
+//void ULobbyPlayerHUD::OnPlayerNameEditableTextBoxCommited(const FText& Text, ETextCommit::Type CommitMethod)
+//{
+//	if (APlayerState* PS = GetOwningPlayerState())
+//	{
+//		FString newName = Text.ToString();
+//		if (!newName.IsEmpty()) PS->SetPlayerName(newName);
+//	}
+//}
 
 void ULobbyPlayerHUD::OnHostServerButtonClicked()
 {

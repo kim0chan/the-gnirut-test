@@ -33,10 +33,24 @@ void AWaitingGameMode::UpdatePlayerList()
 	if (WGS)
 	{
 		WGS->UpdateAllPlayerStates();
+	}	
+}
+
+void AWaitingGameMode::CheckToTravelMainGame()
+{
+	AWaitingGameState* WGS = Cast<AWaitingGameState>(GameState);
+	if (WGS && WGS->isAllPlayersReady())
+	{
+		TravelToMainGame();
 	}
-	
 }
 
 void AWaitingGameMode::TravelToMainGame()
 {
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		bUseSeamlessTravel = true;
+		world->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+	}
 }
