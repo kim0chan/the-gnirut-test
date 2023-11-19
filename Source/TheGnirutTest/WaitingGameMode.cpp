@@ -4,6 +4,7 @@
 #include "WaitingGameMode.h"
 #include "WaitingPlayerController.h"
 #include "WaitingGameState.h"
+#include "WaitingPlayerState.h"
 
 void AWaitingGameMode::PostLogin(APlayerController* NewPlayer)
 {
@@ -12,7 +13,13 @@ void AWaitingGameMode::PostLogin(APlayerController* NewPlayer)
 	AWaitingPlayerController* WPC = Cast<AWaitingPlayerController>(NewPlayer);
 	if (WPC) 
 	{
-		UpdatePlayerList();
+		AWaitingPlayerState* WPS = WPC->GetPlayerState<AWaitingPlayerState>();
+		if (WPS)
+		{
+			WPS->InitPlayerName();
+		}
+
+		//UpdatePlayerList();
 	}
 }
 

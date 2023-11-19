@@ -13,7 +13,11 @@ UCLASS()
 class THEGNIRUTTEST_API UGnirutGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
+
+	FString playerName;
 public:
 	virtual void Init() override;
+
+	void SetPlayerName(FString name) { playerName = name; }
+	FString GetPlayerName() { return playerName; }
 };
