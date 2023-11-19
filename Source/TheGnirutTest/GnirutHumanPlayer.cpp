@@ -11,7 +11,8 @@
 #include "InputActionValue.h"
 #include "GnirutAnimInstance.h"
 #include "DrawDebugHelpers.h"
-#include "TheGnirutTestGameState.h"
+#include "GnirutPlayerState.h"
+#include "GnirutHumanPlayer.h"
 
 AGnirutHumanPlayer::AGnirutHumanPlayer()
 {
@@ -219,6 +220,17 @@ void AGnirutHumanPlayer::AttackCheck()
 			if (TargetCharacter)
 			{
 				TargetCharacter->Dying();
+				APlayerState* AttackerPlayerState = GetPlayerState();
+				AGnirutPlayerState* GnirutPlayerState = Cast<AGnirutPlayerState>(AttackerPlayerState);
+				if (!GnirutPlayerState)	return;
+				
+				AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(TargetCharacter);
+				if (HumanPlayer) {
+					GnirutPlayerState->AddHumanPlayerKills();
+				}
+				else {
+					GnirutPlayerState->AddAIPlayerKills();
+				}
 			}
 		}
 	}
