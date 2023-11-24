@@ -4,6 +4,7 @@
 
 #include "GnirutHumanPlayer.h"
 #include "GnirutPlayerState.h"
+#include "AGnirutPlayerController.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "TheGnirutTestGameState.generated.h"

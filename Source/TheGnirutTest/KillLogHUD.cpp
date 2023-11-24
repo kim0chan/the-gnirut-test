@@ -2,7 +2,17 @@
 
 
 #include "KillLogHUD.h"
+#include "GnirutPlayerState.h"
 #include "Components/TextBlock.h"
+
+void UKillLogHUD::OnKills(const FString& Content)
+{
+	AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(GetOwningPlayerState());
+	if (GPS)
+	{
+		GPS->SetKillLogHUD(Content);
+	}
+}
 
 void UKillLogHUD::SetKillLogTextBlock(const FString& Content)
 {
@@ -21,6 +31,7 @@ void UKillLogHUD::ShowKillLogTextBlock()
 		KillLogTextBlock->SetVisibility(ESlateVisibility::Visible);
 	}
 }
+
 void UKillLogHUD::HideKillLogTextBlock()
 {
 	if (KillLogTextBlock)

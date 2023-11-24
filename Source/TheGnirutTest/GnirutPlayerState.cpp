@@ -3,6 +3,8 @@
 
 #include "GnirutPlayerState.h"
 #include "Net/UnrealNetwork.h"
+#include "KillLogHUD.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 AGnirutPlayerState::AGnirutPlayerState()
 {
@@ -54,8 +56,38 @@ void AGnirutPlayerState::SetPlayerNickName(const FString& NewNickName)
 	PlayerNickName = NewNickName;
 }
 
-void AGnirutPlayerState::SetPlayerIndex(int32 NewIndex) {
+void AGnirutPlayerState::SetPlayerIndex(int32 NewIndex)
+{
 	PlayerIndex = NewIndex;
+}
+
+void AGnirutPlayerState::SetKillLogHUD(const FString& Content)
+{
+	ServerSetKillLogHUD(Content);
+}
+
+void AGnirutPlayerState::ServerSetKillLogHUD_Implementation(const FString& Content)
+{
+	MulticastSetKillLogHUD(Content);
+}
+
+void AGnirutPlayerState::MulticastSetKillLogHUD_Implementation(const FString& Content)
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UKillLogHUD::StaticClass(), false);
+
+		for (UUserWidget* UW : FoundWidgets)
+		{
+			UKillLogHUD* UKL = Cast<UKillLogHUD>(UW);
+			if (UKL)
+			{
+				UKL->SetKillLogTextBlock(Content);
+			}
+		}
+	}
 }
 
 void AGnirutPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

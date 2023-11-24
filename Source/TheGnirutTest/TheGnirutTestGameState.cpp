@@ -32,7 +32,7 @@ void ATheGnirutTestGameState::SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnir
 	}
 
 	FString KillLogMessage = FString::Printf(TEXT("%s has slain %s."), *AttackerNickname, *VictimNickname);
-	UE_LOG(LogTemp, Display, TEXT("%s"), *KillLogMessage);
+	//UE_LOG(LogTemp, Display, TEXT("%s"), *KillLogMessage);
 	UpdateKillLogInfo(KillLogMessage);
 }
 
@@ -49,7 +49,7 @@ void ATheGnirutTestGameState::UpdateKillLogInfo(const FString& KillLogMessage)
 			UKillLogHUD* UKL = Cast<UKillLogHUD>(UW);
 			if (UKL)
 			{
-				UKL->SetKillLogTextBlock(KillLogMessage);
+				UKL->OnKills(KillLogMessage);
 			}
 		}
 	}

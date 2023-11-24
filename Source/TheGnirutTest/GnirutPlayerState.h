@@ -27,6 +27,7 @@ public:
 	void AddHumanPlayerKills();
 	void SetPlayerNickName(const FString& NewNickName);
 	void SetPlayerIndex(int32 NewIndex);
+	void SetKillLogHUD(const FString& Content);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -42,4 +43,12 @@ protected:
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "PlayerState")
 	FString PlayerNickName;
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetKillLogHUD(const FString& Content);
+	void ServerSetKillLogHUD_Implementation(const FString& Content);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSetKillLogHUD(const FString& Content);
+	void MulticastSetKillLogHUD_Implementation(const FString& Content);
 };

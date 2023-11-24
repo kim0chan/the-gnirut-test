@@ -15,6 +15,8 @@ class THEGNIRUTTEST_API UKillLogHUD : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
+	void OnKills(const FString& Content);
 	void SetKillLogTextBlock(const FString& Content);
 	void ShowKillLogTextBlock();
 	void HideKillLogTextBlock();
