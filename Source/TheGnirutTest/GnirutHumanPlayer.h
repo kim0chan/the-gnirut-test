@@ -7,7 +7,7 @@
 #include "GnirutHumanPlayer.generated.h"
 
 /**
- * 
+ *
  */
 class USpringArmComponent;
 class UCameraComponent;
@@ -19,7 +19,7 @@ UCLASS()
 class THEGNIRUTTEST_API AGnirutHumanPlayer : public ATheGnirutTestCharacter
 {
 	GENERATED_BODY()
-	
+
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -117,7 +117,6 @@ protected:
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 
 public:
 	/** Returns CameraBoom subobject **/

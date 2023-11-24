@@ -3,11 +3,13 @@
 #include "TheGnirutTestGameMode.h"
 #include "TheGnirutTestCharacter.h"
 #include "TheGnirutTestGameState.h"
+#include "GnirutPlayerState.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "GnirutHumanPlayer.h"
 
 ATheGnirutTestGameMode::ATheGnirutTestGameMode()
-{	
+{
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_GnirutHumanPlayer"));
 	if (PlayerPawnBPClass.Class != NULL)
@@ -15,13 +17,14 @@ ATheGnirutTestGameMode::ATheGnirutTestGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
-	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_GnirutPlayerController"));
+	static ConstructorHelpers::FClassFinder<APlayerController> PlayerControllerBPClass(TEXT("/Game/Blueprints/BP_AGnirutPlayerController"));
 	if (PlayerControllerBPClass.Class != NULL)
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
 	GameStateClass = ATheGnirutTestGameState::StaticClass();
+	PlayerStateClass = AGnirutPlayerState::StaticClass();
 }
 
 int32 ATheGnirutTestGameMode::GetCurrentPlayerCount()
@@ -35,9 +38,6 @@ void ATheGnirutTestGameMode::StartPlay()
 
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("AI"), Actors);
-	// UE_LOG(LogTemp, Warning, TEXT("There are %d AI player(s)"), Actors.Num() - 1);
-	// UE_LOG(LogTemp, Warning, TEXT("There are %d Human player(s)"), GetCurrentPlayerCount());
-
 	ATheGnirutTestGameState* GnirutGameState = GetGameState<ATheGnirutTestGameState>();
 	GnirutGameState->InitPlayerCounts_Implementation(Actors.Num() - 1, GetCurrentPlayerCount());
 }
@@ -48,4 +48,12 @@ void ATheGnirutTestGameMode::PostLogin(APlayerController* NewPlayer)
 
 	ATheGnirutTestGameState* GnirutGameState = GetGameState<ATheGnirutTestGameState>();
 	GnirutGameState->PlayerLogin_Implementation();
+
+	AGnirutPlayerState* GnirutPlayerState = Cast<AGnirutPlayerState>(NewPlayer->PlayerState);
+	if (GnirutPlayerState)
+	{
+		GnirutPlayerState->SetPlayerIndex(GnirutGameState->GetNumberOfHumanPlayers());
+		FString NewNickName = FString::Printf(TEXT("Player %d"), GnirutPlayerState->GetPlayerIndex());
+		GnirutPlayerState->SetPlayerNickName(NewNickName);
+	}
 }

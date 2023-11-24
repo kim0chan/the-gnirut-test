@@ -9,7 +9,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 
 /**
- * 
+ *
  */
 UCLASS()
 class THEGNIRUTTEST_API UGnirutAnimInstance : public UAnimInstance
@@ -43,7 +43,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool IsFalling;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	bool ShouldMove;
 
