@@ -31,6 +31,14 @@ void UTabkeyPlayerHUD::OnLeaveButtonClicked()
 {
 	if (LeaveButton)
 	{
-
+		UWorld* world = GetWorld();
+		if (world)
+		{
+			AAGnirutPlayerController* GPC = Cast<AAGnirutPlayerController>(world->GetFirstPlayerController());
+			if (GPC)
+			{
+				GPC->ReturnToLobby();
+			}
+		}
 	}
 }

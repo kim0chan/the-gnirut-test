@@ -18,7 +18,7 @@ void AAGnirutPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (PlayerHUDClass)
+	if (IsLocalController() && PlayerHUDClass)
 	{
 		PlayerHUD = CreateWidget<UKillLogHUD>(this, PlayerHUDClass);
 		if (PlayerHUD) {
@@ -57,4 +57,9 @@ void AAGnirutPlayerController::ToggleTabMenuVisibility()
 			}
 		}
 	}
+}
+
+void AAGnirutPlayerController::ReturnToLobby()
+{
+	ClientTravel(TEXT("/Game/Lobby/LobbyMap"), ETravelType::TRAVEL_Absolute);
 }

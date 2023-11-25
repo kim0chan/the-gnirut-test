@@ -20,4 +20,10 @@ protected:
 
 	UFUNCTION()
 	void OnReadyButtonClicked();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* LeaveButton;
+
+	UFUNCTION()
+	void OnLeaveButtonClicked();
 };

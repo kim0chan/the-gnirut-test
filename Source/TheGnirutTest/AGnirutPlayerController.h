@@ -23,6 +23,8 @@ public:
 
 	void ToggleTabMenuVisibility();
 
+	void ReturnToLobby();
+
 protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UKillLogHUD> PlayerHUDClass;

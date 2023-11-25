@@ -28,7 +28,14 @@ void AWaitingGameMode::Logout(AController* Exiting)
 	AWaitingPlayerController* WPC = Cast<AWaitingPlayerController>(Exiting);
 	if (WPC)
 	{
-		UpdatePlayerList();
+		// delay to call UpdatePlayerList after PlayerArray being updated;
+		FTimerHandle LogoutTimer;
+		GetWorldTimerManager().SetTimer(
+			LogoutTimer,
+			this,
+			&AWaitingGameMode::UpdatePlayerList,
+			0.3f
+		);
 	}
 
 	Super::Logout(Exiting);

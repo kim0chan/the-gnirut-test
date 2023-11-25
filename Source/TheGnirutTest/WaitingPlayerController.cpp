@@ -44,6 +44,11 @@ void AWaitingPlayerController::CreatePlayerHUD() {
 	}
 }
 
+void AWaitingPlayerController::ReturnToLobby()
+{
+	ClientTravel(TEXT("/Game/Lobby/LobbyMap"), ETravelType::TRAVEL_Absolute);
+}
+
 void AWaitingPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (PlayerHUD)

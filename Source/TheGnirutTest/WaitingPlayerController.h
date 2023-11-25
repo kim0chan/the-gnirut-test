@@ -23,6 +23,8 @@ public:
 
 	void CreatePlayerHUD();
 
+	void ReturnToLobby();
+
 protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UWaitingPlayerHUD> PlayerHUDClass;
