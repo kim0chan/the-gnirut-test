@@ -8,6 +8,7 @@
 #include "GnirutHumanPlayer.h"
 #include "TheGnirutTestGameMode.h"
 #include "TheGnirutTestGameState.h"
+#include "GnirutPlayerState.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -18,7 +19,6 @@ ATheGnirutTestCharacter::ATheGnirutTestCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
-		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -69,7 +69,6 @@ void ATheGnirutTestCharacter::MulticastDying_Implementation()
 {
 	AnimInstance->SetDead();
 	GetCapsuleComponent()->DestroyComponent();
-	UE_LOG(LogTemp, Display, TEXT("[Character] Disable Collision"));
 	if (!HasAuthority())	return;
 	AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(this);
 	ATheGnirutTestGameState* GnirutGameState = GetWorld()->GetGameState<ATheGnirutTestGameState>();

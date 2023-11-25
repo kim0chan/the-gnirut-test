@@ -41,7 +41,7 @@ void UGnirutAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		Velocity = MovementComponent->Velocity;
 		GroundSpeed = Velocity.Size2D();
 		ShouldMove = MovementComponent->GetCurrentAcceleration() != FVector(0, 0, 0) && GroundSpeed > 3.0;
-		IsFalling = MovementComponent->IsFalling();		
+		IsFalling = MovementComponent->IsFalling();
 	}
 }
 

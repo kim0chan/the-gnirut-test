@@ -11,8 +11,6 @@ class ATheGnirutTestGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	void CheckGameEnd();
-
 public:
 	ATheGnirutTestGameMode();
 

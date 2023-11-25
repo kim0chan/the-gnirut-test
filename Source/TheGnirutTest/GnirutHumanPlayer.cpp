@@ -13,6 +13,8 @@
 #include "DrawDebugHelpers.h"
 #include "GnirutPlayerState.h"
 #include "GnirutHumanPlayer.h"
+#include "TheGnirutTestGameState.h"
+#include "AGnirutPlayerController.h"
 
 AGnirutHumanPlayer::AGnirutHumanPlayer()
 {
@@ -149,7 +151,7 @@ void AGnirutHumanPlayer::ServerStopRunning_Implementation()
 	MulticastStopRunning();
 }
 
-void AGnirutHumanPlayer::MulticastStopRunning_Implementation() 
+void AGnirutHumanPlayer::MulticastStopRunning_Implementation()
 {
 	if (Controller != nullptr) {
 		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
@@ -217,20 +219,28 @@ void AGnirutHumanPlayer::AttackCheck()
 		if (HitResult.GetActor())
 		{
 			ATheGnirutTestCharacter* TargetCharacter = Cast<ATheGnirutTestCharacter>(HitResult.GetActor());
+			// If target is a character.
 			if (TargetCharacter)
 			{
-				TargetCharacter->Dying();
 				APlayerState* AttackerPlayerState = GetPlayerState();
-				AGnirutPlayerState* GnirutPlayerState = Cast<AGnirutPlayerState>(AttackerPlayerState);
-				if (!GnirutPlayerState)	return;
-				
+				AGnirutPlayerState* AttackerGnirutPlayerState = Cast<AGnirutPlayerState>(AttackerPlayerState);
+				if (!AttackerGnirutPlayerState)	return;
+
 				AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(TargetCharacter);
+
+				ATheGnirutTestGameState* GnirutGameState = GetWorld()->GetGameState<ATheGnirutTestGameState>();
+				if (!GnirutGameState)	return;
+
 				if (HumanPlayer) {
-					GnirutPlayerState->AddHumanPlayerKills();
+					// If target is a human player.
+					AttackerGnirutPlayerState->AddHumanPlayerKills();
 				}
 				else {
-					GnirutPlayerState->AddAIPlayerKills();
+					// if target is an AI player.
+					AttackerGnirutPlayerState->AddAIPlayerKills();
 				}
+				GnirutGameState->SetKillLogInfo(this, HumanPlayer);
+				TargetCharacter->Dying();
 			}
 		}
 	}

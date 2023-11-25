@@ -2,12 +2,15 @@
 
 #pragma once
 
+#include "GnirutHumanPlayer.h"
+#include "GnirutPlayerState.h"
+#include "AGnirutPlayerController.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "TheGnirutTestGameState.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class THEGNIRUTTEST_API ATheGnirutTestGameState : public AGameStateBase
@@ -22,6 +25,12 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State")
 	int32 NumberOfHumanPlayers;
+
+	UFUNCTION(Category = "Game State")
+	void SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnirutHumanPlayer* Victim);
+
+	UFUNCTION(Category = "Game State")
+	void UpdateKillLogInfo(const FString& KillLogMessage);
 
 	UFUNCTION(Server, Reliable)
 	void DecrementPlayerCounts(bool isAIPlayer);
@@ -44,6 +53,6 @@ public:
 
 
 protected:
-	// Replicated 변수 초기화
-	virtual void GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const override;
+	// Replicated
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
