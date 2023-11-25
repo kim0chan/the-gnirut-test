@@ -81,10 +81,23 @@ void AGnirutHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 		// Attacking
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AGnirutHumanPlayer::Attack);
+
+		// Tab Menu toggle
+		EnhancedInputComponent->BindAction(TabkeyAction, ETriggerEvent::Started, this, &AGnirutHumanPlayer::PressTab);
+
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void AGnirutHumanPlayer::PressTab()
+{
+	AAGnirutPlayerController* GPC = Cast<AAGnirutPlayerController>(Controller);
+	if (GPC)
+	{
+		GPC->ToggleTabMenuVisibility();
 	}
 }
 

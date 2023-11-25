@@ -52,6 +52,10 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public ATheGnirutTestCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
 
+	/** Tabkey Input Action*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* TabkeyAction;
+
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	float AttackRange;
 
@@ -108,6 +112,9 @@ protected:
 
 	//UPROPERTY()
 	//class UGnirutAnimInstance* AnimInstance;
+
+	UFUNCTION()
+	void PressTab();
 
 protected:
 	virtual void PostInitializeComponents() override;

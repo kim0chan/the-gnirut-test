@@ -3,7 +3,10 @@
 
 #include "AGnirutPlayerController.h"
 #include "KillLogHUD.h"
+#include "TabkeyPlayerHUD.h"
 #include "Blueprint/UserWidget.h"
+#include "TheGnirutTestGameMode.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 
 AAGnirutPlayerController::AAGnirutPlayerController()
 {
@@ -34,4 +37,24 @@ void AAGnirutPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	Super::EndPlay(EndPlayReason);
+}
+
+void AAGnirutPlayerController::ToggleTabMenuVisibility()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UTabkeyPlayerHUD::StaticClass(), false);
+
+		for (UUserWidget* UW : FoundWidgets)
+		{
+			UTabkeyPlayerHUD* TPH = Cast<UTabkeyPlayerHUD>(UW);
+			if (TPH)
+			{
+				TPH->ToggleVisibility();
+				SetShowMouseCursor(!ShouldShowMouseCursor());
+			}
+		}
+	}
 }

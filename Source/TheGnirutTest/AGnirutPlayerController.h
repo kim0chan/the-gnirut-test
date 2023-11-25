@@ -21,6 +21,8 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	void ToggleTabMenuVisibility();
+
 protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UKillLogHUD> PlayerHUDClass;
