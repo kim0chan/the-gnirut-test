@@ -65,6 +65,6 @@ void AWaitingGameMode::TravelToMainGame()
 	if (world)
 	{
 		bUseSeamlessTravel = true;
-		world->ServerTravel("/Game/ThirdPerson/Maps/ThirdPersonMap?listen");
+		world->ServerTravel("/Game/Gnirut/BasicMap?listen");
 	}
 }
