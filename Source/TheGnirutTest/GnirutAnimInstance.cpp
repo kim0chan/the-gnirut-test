@@ -2,7 +2,7 @@
 
 
 #include "GnirutAnimInstance.h"
-#include "TheGnirutTestCharacter.h"
+#include "GnirutCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 UGnirutAnimInstance::UGnirutAnimInstance()
@@ -26,7 +26,7 @@ UGnirutAnimInstance::UGnirutAnimInstance()
 void UGnirutAnimInstance::NativeInitializeAnimation()
 {
 	auto Actor = GetOwningActor();
-	Character = Cast<ATheGnirutTestCharacter>(Actor);
+	Character = Cast<AGnirutCharacter>(Actor);
 	if (Character)
 	{
 		MovementComponent = Character->GetCharacterMovement();

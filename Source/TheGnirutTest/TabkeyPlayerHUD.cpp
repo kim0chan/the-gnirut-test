@@ -3,7 +3,7 @@
 
 #include "TabkeyPlayerHUD.h"
 #include "Components/Button.h"
-#include "AGnirutPlayerController.h"
+#include "GnirutPlayerController.h"
 
 void UTabkeyPlayerHUD::NativeConstruct()
 {
@@ -34,7 +34,7 @@ void UTabkeyPlayerHUD::OnLeaveButtonClicked()
 		UWorld* world = GetWorld();
 		if (world)
 		{
-			AAGnirutPlayerController* GPC = Cast<AAGnirutPlayerController>(world->GetFirstPlayerController());
+			AGnirutPlayerController* GPC = Cast<AGnirutPlayerController>(world->GetFirstPlayerController());
 			if (GPC)
 			{
 				GPC->ReturnToLobby();

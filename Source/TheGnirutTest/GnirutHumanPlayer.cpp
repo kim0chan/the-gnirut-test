@@ -13,8 +13,8 @@
 #include "DrawDebugHelpers.h"
 #include "GnirutPlayerState.h"
 #include "GnirutHumanPlayer.h"
-#include "TheGnirutTestGameState.h"
-#include "AGnirutPlayerController.h"
+#include "GnirutGameState.h"
+#include "GnirutPlayerController.h"
 
 AGnirutHumanPlayer::AGnirutHumanPlayer()
 {
@@ -94,7 +94,7 @@ void AGnirutHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AGnirutHumanPlayer::PressTab()
 {
-	AAGnirutPlayerController* GPC = Cast<AAGnirutPlayerController>(Controller);
+	AGnirutPlayerController* GPC = Cast<AGnirutPlayerController>(Controller);
 	if (GPC)
 	{
 		GPC->ToggleTabMenuVisibility();
@@ -231,7 +231,7 @@ void AGnirutHumanPlayer::AttackCheck()
 	{
 		if (HitResult.GetActor())
 		{
-			ATheGnirutTestCharacter* TargetCharacter = Cast<ATheGnirutTestCharacter>(HitResult.GetActor());
+			AGnirutCharacter* TargetCharacter = Cast<AGnirutCharacter>(HitResult.GetActor());
 			// If target is a character.
 			if (TargetCharacter)
 			{
@@ -241,7 +241,7 @@ void AGnirutHumanPlayer::AttackCheck()
 
 				AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(TargetCharacter);
 
-				ATheGnirutTestGameState* GnirutGameState = GetWorld()->GetGameState<ATheGnirutTestGameState>();
+				AGnirutGameState* GnirutGameState = GetWorld()->GetGameState<AGnirutGameState>();
 				if (!GnirutGameState)	return;
 
 				if (HumanPlayer) {

@@ -30,7 +30,7 @@ private:
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
-	class ATheGnirutTestCharacter* Character;
+	class AGnirutCharacter* Character;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = true))
 	class UCharacterMovementComponent* MovementComponent;

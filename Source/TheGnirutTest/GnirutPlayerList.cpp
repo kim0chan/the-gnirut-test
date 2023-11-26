@@ -3,7 +3,7 @@
 
 #include "GnirutPlayerList.h"
 #include "Components/ScrollBox.h"
-#include "TheGnirutTestGameState.h"
+#include "GnirutGameState.h"
 #include "GnirutPlayerState.h"
 #include "GnirutPlayerListItem.h"
 
@@ -12,7 +12,7 @@ void UGnirutPlayerList::UpdatePlayerList()
 	UWorld* world = GetWorld();
 	if (world)
 	{
-		ATheGnirutTestGameState* GGS = Cast<ATheGnirutTestGameState>(world->GetGameState());
+		AGnirutGameState* GGS = Cast<AGnirutGameState>(world->GetGameState());
 		if (GGS)
 		{
 			PlayerScrollBox->ClearChildren();

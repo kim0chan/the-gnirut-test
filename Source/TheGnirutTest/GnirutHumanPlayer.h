@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TheGnirutTestCharacter.h"
+#include "GnirutCharacter.h"
 #include "GnirutHumanPlayer.generated.h"
 
 /**
@@ -16,7 +16,7 @@ class UInputAction;
 struct FInputActionValue;
 
 UCLASS()
-class THEGNIRUTTEST_API AGnirutHumanPlayer : public ATheGnirutTestCharacter
+class THEGNIRUTTEST_API AGnirutHumanPlayer : public AGnirutCharacter
 {
 	GENERATED_BODY()
 
