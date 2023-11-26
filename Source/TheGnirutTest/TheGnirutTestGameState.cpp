@@ -5,6 +5,7 @@
 #include "KillLogHUD.h"
 #include "Net/UnrealNetwork.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "GnirutPlayerList.h"
 
 ATheGnirutTestGameState::ATheGnirutTestGameState()
 {
@@ -99,6 +100,7 @@ void ATheGnirutTestGameState::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 
 	DOREPLIFETIME_CONDITION(ATheGnirutTestGameState, NumberOfAIPlayers, COND_None);
 	DOREPLIFETIME_CONDITION(ATheGnirutTestGameState, NumberOfHumanPlayers, COND_None);
+	DOREPLIFETIME(ATheGnirutTestGameState, AllPlayerStates);
 }
 
 int32 ATheGnirutTestGameState::GetNumberOfHumanPlayers() {
@@ -106,5 +108,41 @@ int32 ATheGnirutTestGameState::GetNumberOfHumanPlayers() {
 }
 int32 ATheGnirutTestGameState::GetNumberOfAIPlayers() {
 	return NumberOfAIPlayers;
+}
+
+void ATheGnirutTestGameState::UpdateAllPlayerStates()
+{
+	AllPlayerStates.Empty();
+	for (APlayerState* PS : PlayerArray) {
+		AllPlayerStates.Add(PS);
+	}
+
+	// for server
+	UpdatePlayerList();
+}
+
+void ATheGnirutTestGameState::OnRep_AllPlayerState()
+{
+	// for client
+	UpdatePlayerList();
+}
+
+void ATheGnirutTestGameState::UpdatePlayerList()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UGnirutPlayerList::StaticClass(), false);
+
+		for (UUserWidget* UW : FoundWidgets)
+		{
+			UGnirutPlayerList* GPL = Cast<UGnirutPlayerList>(UW);
+			if (GPL)
+			{
+				GPL->UpdatePlayerList();
+			}
+		}
+	}
 }
 

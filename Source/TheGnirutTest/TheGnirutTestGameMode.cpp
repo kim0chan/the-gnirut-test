@@ -7,6 +7,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "GnirutHumanPlayer.h"
+#include "AGnirutPlayerController.h"
 
 ATheGnirutTestGameMode::ATheGnirutTestGameMode()
 {
@@ -55,5 +56,40 @@ void ATheGnirutTestGameMode::PostLogin(APlayerController* NewPlayer)
 		GnirutPlayerState->SetPlayerIndex(GnirutGameState->GetNumberOfHumanPlayers());
 		FString NewNickName = FString::Printf(TEXT("Player %d"), GnirutPlayerState->GetPlayerIndex());
 		GnirutPlayerState->SetPlayerNickName(NewNickName);
+	}
+
+	//if (NewPlayer->GetNetConnection()) {
+	//	UE_LOG(LogTemp, Display, TEXT("** %d"), NewPlayer->GetNetConnection()->GetConnectionId());
+	//}
+
+	UpdatePlayerList();
+}
+
+void ATheGnirutTestGameMode::Logout(AController* Exiting)
+{
+
+	AAGnirutPlayerController* GPC = Cast<AAGnirutPlayerController>(Exiting);
+	if (GPC)
+	{
+		// delay to call UpdatePlayerList after PlayerArray being updated;
+		FTimerHandle LogoutTimer;
+		GetWorldTimerManager().SetTimer(
+			LogoutTimer,
+			this,
+			&ATheGnirutTestGameMode::UpdatePlayerList,
+			0.3f
+		);
+	}
+
+	Super::Logout(Exiting);
+}
+
+
+void ATheGnirutTestGameMode::UpdatePlayerList()
+{
+	ATheGnirutTestGameState* GGS = Cast<ATheGnirutTestGameState>(GameState);
+	if (GGS)
+	{
+		GGS->UpdateAllPlayerStates();
 	}
 }

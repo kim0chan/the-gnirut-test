@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "PlayerList.generated.h"
+#include "WaitingPlayerList.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class THEGNIRUTTEST_API UPlayerList : public UUserWidget
+class THEGNIRUTTEST_API UWaitingPlayerList : public UUserWidget
 {
 	GENERATED_BODY()
 	
@@ -23,7 +23,7 @@ public:
 	void UpdatePlayerReady(int32 PlayerID, bool isReady);
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<class UPlayerListItem> PlayerListItemClass;
+	TSubclassOf<class UWaitingPlayerListItem> PlayerListItemClass;
 	
-	TMap<int32, UPlayerListItem*> PlayerListItemByPlayerID;
+	TMap<int32, UWaitingPlayerListItem*> PlayerListItemByPlayerID;
 };

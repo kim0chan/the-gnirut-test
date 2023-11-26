@@ -4,7 +4,7 @@
 #include "WaitingPlayerState.h"
 #include "WaitingGameMode.h"
 #include "GnirutGameInstance.h"
-#include "PlayerList.h"
+#include "WaitingPlayerList.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -87,14 +87,14 @@ void AWaitingPlayerState::UpdatePlayerReady()
 	if (world)
 	{
 		TArray<UUserWidget*> FoundWidgets;
-		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UPlayerList::StaticClass(), false);
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UWaitingPlayerList::StaticClass(), false);
 
 		for (UUserWidget* UW : FoundWidgets)
 		{
-			UPlayerList* UPL = Cast<UPlayerList>(UW);
-			if (UPL)
+			UWaitingPlayerList* WPL = Cast<UWaitingPlayerList>(UW);
+			if (WPL)
 			{
-				UPL->UpdatePlayerReady(GetPlayerId(), bIsReady);
+				WPL->UpdatePlayerReady(GetPlayerId(), bIsReady);
 			}
 		}
 

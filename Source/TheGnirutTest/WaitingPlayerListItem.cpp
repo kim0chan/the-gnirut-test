@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerListItem.h"
+#include "WaitingPlayerListItem.h"
 #include "Components/TextBlock.h"
 
-void UPlayerListItem::setPlayerNameTextBlock(FText playerName)
+void UWaitingPlayerListItem::setPlayerNameTextBlock(FText playerName)
 {
 	if (PlayerNameTextBlock)
 	{
@@ -12,7 +12,7 @@ void UPlayerListItem::setPlayerNameTextBlock(FText playerName)
 	}
 }
 
-void UPlayerListItem::setIsReadyTextBlock(bool isReady)
+void UWaitingPlayerListItem::setIsReadyTextBlock(bool isReady)
 {
 	if (IsReadyTextBlock)
 	{

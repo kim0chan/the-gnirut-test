@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerList.h"
+#include "WaitingPlayerList.h"
 #include "Components/ScrollBox.h"
 #include "WaitingGameState.h"
 #include "WaitingPlayerState.h"
-#include "PlayerListItem.h"
+#include "WaitingPlayerListItem.h"
 
-void UPlayerList::UpdatePlayerList()
+void UWaitingPlayerList::UpdatePlayerList()
 {
 	UWorld* world = GetWorld();
 	if (world)
@@ -21,7 +21,7 @@ void UPlayerList::UpdatePlayerList()
 				AWaitingPlayerState* WPS = Cast<AWaitingPlayerState>(PS);
 				if (WPS)
 				{						
-					UPlayerListItem* PLI = Cast<UPlayerListItem>(CreateWidget<UPlayerListItem>(this, PlayerListItemClass));
+					UWaitingPlayerListItem* PLI = CreateWidget<UWaitingPlayerListItem>(this, PlayerListItemClass);
 					if (PLI)
 					{
 						PLI->setPlayerNameTextBlock(FText::FromString(WPS->GetPlayerName()));
@@ -35,9 +35,9 @@ void UPlayerList::UpdatePlayerList()
 	}
 }
 
-void UPlayerList::UpdatePlayerReady(int32 PlayerID, bool isReady)
+void UWaitingPlayerList::UpdatePlayerReady(int32 PlayerID, bool isReady)
 {
-	UPlayerListItem** PLI = PlayerListItemByPlayerID.Find(PlayerID);
+	UWaitingPlayerListItem** PLI = PlayerListItemByPlayerID.Find(PlayerID);
 	if (PLI)
 	{
 		(*PLI)->setIsReadyTextBlock(isReady);

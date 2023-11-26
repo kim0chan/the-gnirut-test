@@ -3,7 +3,7 @@
 
 #include "WaitingGameState.h"
 #include "WaitingPlayerState.h"
-#include "PlayerList.h"
+#include "WaitingPlayerList.h"
 #include "Net/UnrealNetwork.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
@@ -51,14 +51,14 @@ void AWaitingGameState::UpdatePlayerList()
 	if (world)
 	{
 		TArray<UUserWidget*> FoundWidgets;
-		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UPlayerList::StaticClass(), false);
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UWaitingPlayerList::StaticClass(), false);
 
 		for (UUserWidget* UW : FoundWidgets)
 		{
-			UPlayerList* UPL = Cast<UPlayerList>(UW);
-			if (UPL)
+			UWaitingPlayerList* WPL = Cast<UWaitingPlayerList>(UW);
+			if (WPL)
 			{
-				UPL->UpdatePlayerList();
+				WPL->UpdatePlayerList();
 			}
 		}
 	}

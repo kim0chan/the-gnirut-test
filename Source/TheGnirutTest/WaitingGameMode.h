@@ -15,9 +15,9 @@ class THEGNIRUTTEST_API AWaitingGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	virtual void PostLogin(APlayerController* NewPlayer);
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 
-	virtual void Logout(AController* Exiting);
+	virtual void Logout(AController* Exiting) override;
 
 	void UpdatePlayerList();
 

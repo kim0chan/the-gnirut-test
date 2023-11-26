@@ -51,6 +51,16 @@ public:
 	int32 GetNumberOfHumanPlayers();
 	int32 GetNumberOfAIPlayers();
 
+	// for PlayerList
+	void UpdateAllPlayerStates();
+
+	UFUNCTION()
+	void OnRep_AllPlayerState();
+
+	void UpdatePlayerList();
+
+	UPROPERTY(ReplicatedUsing = OnRep_AllPlayerState)
+	TArray<APlayerState*> AllPlayerStates;
 
 protected:
 	// Replicated
