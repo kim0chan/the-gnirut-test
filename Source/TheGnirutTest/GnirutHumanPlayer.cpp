@@ -9,6 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "GameFramework/SpectatorPawn.h"
 #include "GnirutAnimInstance.h"
 #include "DrawDebugHelpers.h"
 #include "GnirutPlayerState.h"
@@ -262,4 +263,18 @@ void AGnirutHumanPlayer::AttackCheck()
 void AGnirutHumanPlayer::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsAttacking = false;
+}
+
+void AGnirutHumanPlayer::Dying()
+{
+	AController* CharacterController = GetController();
+	FVector ActorLocation = GetActorLocation();
+	FRotator ActorRotation = GetActorRotation();
+	Super::Dying();
+
+	if (CharacterController)
+	{
+		ASpectatorPawn* SpectatorPawn = GetWorld()->SpawnActor<ASpectatorPawn>(ASpectatorPawn::StaticClass(), ActorLocation, ActorRotation);
+		CharacterController->Possess(SpectatorPawn);
+	}
 }

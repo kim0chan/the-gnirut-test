@@ -116,7 +116,6 @@ protected:
 	UFUNCTION()
 	void PressTab();
 
-protected:
 	virtual void PostInitializeComponents() override;
 
 	// To add mapping context
@@ -124,6 +123,8 @@ protected:
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void Dying() override;
 
 public:
 	/** Returns CameraBoom subobject **/
