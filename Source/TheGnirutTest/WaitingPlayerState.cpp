@@ -20,39 +20,46 @@ void AWaitingPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(AWaitingPlayerState, bIsReady);
 }
 
-void AWaitingPlayerState::InitPlayerName()
+void AWaitingPlayerState::InitPlayerName(const uint32 key)
 {
 	if (GetOwningController()->IsLocalPlayerController()) {
 		if (UGnirutGameInstance* GGI = GetGameInstance<UGnirutGameInstance>()) {
 			FString name = GGI->GetPlayerName();
-			SetPlayerNameAndUpdate(name);
+			SetPlayerNameAndUpdate(name, key);
 		}
 	}
 	else {
-		ClientSetPlayerNameFromGameInstance();
+		ClientSetPlayerNameFromGameInstance(key);
 	}
 }
 
-void AWaitingPlayerState::ClientSetPlayerNameFromGameInstance_Implementation()
+void AWaitingPlayerState::ClientSetPlayerNameFromGameInstance_Implementation(const uint32& key)
 {
 	if (UGnirutGameInstance* GGI = GetGameInstance<UGnirutGameInstance>()) {
 		FString name = GGI->GetPlayerName();
-		UE_LOG(LogTemp, Display, TEXT("%s"), *name);
+		//UE_LOG(LogTemp, Display, TEXT("%s"), *name);
 		if (!name.IsEmpty()) {
 			SetPlayerName(name);
 		}
-		ServerSetPlayerNameFromGameInstance(name);
+		ServerSetPlayerNameFromGameInstance(name, key);
 	}
 }
 
-void AWaitingPlayerState::ServerSetPlayerNameFromGameInstance_Implementation(const FString& PlayerName)
+void AWaitingPlayerState::ServerSetPlayerNameFromGameInstance_Implementation(const FString& PlayerName, const  uint32& key)
 {
-	SetPlayerNameAndUpdate(PlayerName);
+	SetPlayerNameAndUpdate(PlayerName, key);
 }
 
-void AWaitingPlayerState::SetPlayerNameAndUpdate(const FString& PlayerName)
+void AWaitingPlayerState::SetPlayerNameAndUpdate(const FString& PlayerName, const uint32& key)
 {
-	if (!PlayerName.IsEmpty()) SetPlayerName(PlayerName);
+	if (!PlayerName.IsEmpty()) {
+		SetPlayerName(PlayerName);
+		UGnirutGameInstance* GGI = Cast<UGnirutGameInstance>(GetGameInstance());
+		if (GGI)
+		{
+			GGI->PlayerNameMap.Add(key, PlayerName);
+		}
+	}
 
 	UWorld* world = GetWorld();
 	if (world)

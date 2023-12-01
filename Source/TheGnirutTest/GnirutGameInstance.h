@@ -20,4 +20,6 @@ public:
 
 	void SetPlayerName(FString name) { playerName = name; }
 	FString GetPlayerName() { return playerName; }
+
+	TMap<uint32, FString> PlayerNameMap;
 };

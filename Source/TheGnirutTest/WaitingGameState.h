@@ -19,6 +19,8 @@ public:
 
 	void UpdatePlayerList();
 
+	void SavePlayerNameMap();
+
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void UpdateAllPlayerStates();

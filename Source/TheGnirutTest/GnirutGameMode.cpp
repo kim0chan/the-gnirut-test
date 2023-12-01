@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GnirutHumanPlayer.h"
 #include "GnirutPlayerController.h"
+#include "GnirutGameInstance.h"
 
 AGnirutGameMode::AGnirutGameMode()
 {
@@ -55,13 +56,22 @@ void AGnirutGameMode::PostLogin(APlayerController* NewPlayer)
 	{
 		GnirutPlayerState->SetPlayerIndex(GnirutGameState->GetNumberOfHumanPlayers());
 		FString NewNickName = FString::Printf(TEXT("Player %d"), GnirutPlayerState->GetPlayerIndex());
+		UGnirutGameInstance* GGI = Cast<UGnirutGameInstance>(GetGameInstance());
+		if (GGI)
+		{
+			if (NewPlayer->IsLocalPlayerController()) {
+				NewNickName = GGI->GetPlayerName();
+			}
+			else if (NewPlayer->GetNetConnection())
+			{
+				uint32 key = NewPlayer->GetNetConnection()->GetConnectionId();
+				//UE_LOG(LogTemp, Display, TEXT("%s"), *(NewPlayer->GetNetConnection()->LowLevelGetRemoteAddress()));
+				//UE_LOG(LogTemp, Display, TEXT("%d"), NewPlayer->GetNetConnection()->GetConnectionId());
+				GGI->PlayerNameMap.RemoveAndCopyValue(key, NewNickName);
+			}
+		}
 		GnirutPlayerState->SetPlayerNickName(NewNickName);
 	}
-
-	//if (NewPlayer->GetNetConnection()) {
-	//	UE_LOG(LogTemp, Display, TEXT("** %d"), NewPlayer->GetNetConnection()->GetConnectionId());
-	//}
-
 	UpdatePlayerList();
 }
 

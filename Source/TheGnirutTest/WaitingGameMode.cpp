@@ -16,10 +16,17 @@ void AWaitingGameMode::PostLogin(APlayerController* NewPlayer)
 		AWaitingPlayerState* WPS = WPC->GetPlayerState<AWaitingPlayerState>();
 		if (WPS)
 		{
-			WPS->InitPlayerName();
+			if (NewPlayer->GetNetConnection())
+			{
+				WPS->InitPlayerName(NewPlayer->GetNetConnection()->GetConnectionId());
+				//UE_LOG(LogTemp, Display, TEXT("%s"), *(NewPlayer->GetNetConnection()->LowLevelGetRemoteAddress()));
+				//UE_LOG(LogTemp, Display, TEXT("%d"), NewPlayer->GetNetConnection()->GetConnectionId());
+			}
+			else
+			{
+				WPS->InitPlayerName(0);
+			}
 		}
-
-		//UpdatePlayerList();
 	}
 }
 
