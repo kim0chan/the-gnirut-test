@@ -49,6 +49,12 @@ void AGnirutCharacter::PostInitializeComponents()
 
 void AGnirutCharacter::Dying()
 {
+	AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(GetPlayerState());
+	if (GPS)
+	{
+		GPS->SetDead();
+	}
+
 	AController* CharacterController = GetController();
 	if (CharacterController)
 	{

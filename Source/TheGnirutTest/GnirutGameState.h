@@ -23,7 +23,10 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State")
 	int32 NumberOfAIPlayers;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State")
+	UFUNCTION()
+	void OnRep_NumberOfHumanPlayers();
+	void UpdateNumberOfHumanPlayers();
+	UPROPERTY(ReplicatedUsing = OnRep_NumberOfHumanPlayers, BlueprintReadOnly, Category = "Game State")
 	int32 NumberOfHumanPlayers;
 
 	UFUNCTION(Category = "Game State")

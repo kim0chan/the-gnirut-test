@@ -59,7 +59,7 @@ void AGnirutGameMode::PostLogin(APlayerController* NewPlayer)
 		UGnirutGameInstance* GGI = Cast<UGnirutGameInstance>(GetGameInstance());
 		if (GGI)
 		{
-			if (NewPlayer->IsLocalPlayerController()) {
+			if (NewPlayer->IsLocalPlayerController() && !GGI->GetPlayerName().IsEmpty()) {
 				NewNickName = GGI->GetPlayerName();
 			}
 			else if (NewPlayer->GetNetConnection())

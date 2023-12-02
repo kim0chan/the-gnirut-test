@@ -8,9 +8,33 @@
 #include "GnirutPlayerList.h"
 
 AGnirutGameState::AGnirutGameState()
-{
+{ 
 	NumberOfAIPlayers = 0;
 	NumberOfHumanPlayers = 0;
+}
+
+void AGnirutGameState::OnRep_NumberOfHumanPlayers()
+{
+	UpdateNumberOfHumanPlayers();
+}
+
+void AGnirutGameState::UpdateNumberOfHumanPlayers()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UGnirutPlayerList::StaticClass(), false);
+
+		for (UUserWidget* UW : FoundWidgets)
+		{
+			UGnirutPlayerList* GPL = Cast<UGnirutPlayerList>(UW);
+			if (GPL)
+			{
+				GPL->UpdateNumberOfHumanPlayers(NumberOfHumanPlayers);
+			}
+		}
+	}
 }
 
 void AGnirutGameState::SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnirutHumanPlayer* Victim)
@@ -66,6 +90,7 @@ void AGnirutGameState::DecrementPlayerCounts_Implementation(bool isAIPlayer)
 	else
 	{
 		NumberOfHumanPlayers--;
+		UpdateNumberOfHumanPlayers();
 		//UE_LOG(LogTemp, Display, TEXT("[kill log] a Human Player got killed! [%d]"), NumberOfHumanPlayers);
 	}
 
@@ -85,12 +110,14 @@ void AGnirutGameState::InitPlayerCounts_Implementation(int32 numAI, int32 numHum
 {
 	NumberOfAIPlayers = numAI;
 	NumberOfHumanPlayers = numHuman;
+	UpdateNumberOfHumanPlayers();
 	//UE_LOG(LogTemp, Display, TEXT("[Initialization] AI : %d, Human : %d"), NumberOfAIPlayers, NumberOfHumanPlayers);
 }
 
 void AGnirutGameState::PlayerLogin_Implementation()
 {
 	NumberOfHumanPlayers++;
+	UpdateNumberOfHumanPlayers();
 	//UE_LOG(LogTemp, Display, TEXT("[Login] A player has entered the game. There are %d"), NumberOfHumanPlayers);
 }
 

@@ -28,9 +28,19 @@ public:
 	void SetPlayerIndex(int32 NewIndex);
 	void SetKillLogHUD(const FString& Content);
 
+	void SetDead();
+	UFUNCTION(Server, Unreliable)
+	void ServerSetDead();
+	UFUNCTION()
+	void OnRep_SetDead();
+	void UpdatePlayerAlive();
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
+	UPROPERTY(ReplicatedUsing = OnRep_SetDead, BlueprintReadOnly, Category = "PlayerState")
+	bool bIsAlive;
+
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "PlayerState")
 	int32 AIPlayerKills;
 

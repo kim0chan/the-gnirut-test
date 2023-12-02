@@ -5,9 +5,11 @@
 #include "Net/UnrealNetwork.h"
 #include "KillLogHUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "GnirutPlayerList.h"
 
 AGnirutPlayerState::AGnirutPlayerState()
 {
+	bIsAlive = true;
 	AIPlayerKills = 0;
 	HumanPlayerKills = 0;
 	PlayerIndex = 0;
@@ -61,6 +63,41 @@ void AGnirutPlayerState::SetPlayerIndex(int32 NewIndex)
 	PlayerIndex = NewIndex;
 }
 
+void AGnirutPlayerState::SetDead()
+{
+	ServerSetDead();
+}
+
+void AGnirutPlayerState::ServerSetDead_Implementation()
+{
+	bIsAlive = false;
+	UpdatePlayerAlive();
+}
+
+void AGnirutPlayerState::OnRep_SetDead()
+{
+	UpdatePlayerAlive();
+}
+
+void AGnirutPlayerState::UpdatePlayerAlive()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UGnirutPlayerList::StaticClass(), false);
+
+		for (UUserWidget* UW : FoundWidgets)
+		{
+			UGnirutPlayerList* GPL = Cast<UGnirutPlayerList>(UW);
+			if (GPL)
+			{
+				GPL->UpdatePlayerAlive(GetPlayerId(), bIsAlive);
+			}
+		}
+	}
+}
+
 void AGnirutPlayerState::SetKillLogHUD(const FString& Content)
 {
 	ServerSetKillLogHUD(Content);
@@ -94,6 +131,7 @@ void AGnirutPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(AGnirutPlayerState, bIsAlive);
 	DOREPLIFETIME(AGnirutPlayerState, AIPlayerKills);
 	DOREPLIFETIME(AGnirutPlayerState, HumanPlayerKills);
 	DOREPLIFETIME(AGnirutPlayerState, PlayerIndex);

@@ -4,15 +4,19 @@
 #include "WaitingPlayerListItem.h"
 #include "Components/TextBlock.h"
 
-void UWaitingPlayerListItem::setPlayerNameTextBlock(FText playerName)
+void UWaitingPlayerListItem::SetPlayerNameTextBlock(FText playerName)
 {
 	if (PlayerNameTextBlock)
 	{
 		PlayerNameTextBlock->SetText(playerName);
+		if (bIsLocalPlayer)
+		{
+			PlayerNameTextBlock->SetColorAndOpacity(FSlateColor(FColor(255, 255, 0)));
+		}
 	}
 }
 
-void UWaitingPlayerListItem::setIsReadyTextBlock(bool isReady)
+void UWaitingPlayerListItem::SetIsReadyTextBlock(bool isReady)
 {
 	if (IsReadyTextBlock)
 	{
@@ -22,5 +26,14 @@ void UWaitingPlayerListItem::setIsReadyTextBlock(bool isReady)
 		else {
 			IsReadyTextBlock->SetText(FText::FromString(TEXT("X")));
 		}
+		if (bIsLocalPlayer)
+		{
+			IsReadyTextBlock->SetColorAndOpacity(FSlateColor(FColor(255, 255, 0)));
+		}
 	}	
+}
+
+void UWaitingPlayerListItem::SetIsLocalPlayer(bool isLocalPlayer)
+{
+	bIsLocalPlayer = isLocalPlayer;
 }
