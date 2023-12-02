@@ -11,8 +11,10 @@ void UGnirutPlayerListItem::SetPlayerNameTextBlock(FText playerName)
 		PlayerNameTextBlock->SetText(playerName);
 		if (bIsLocalPlayer)
 		{
-			PlayerNameTextBlock->SetColorAndOpacity(FSlateColor(FColor(255, 255, 0)));
-			IsAliveTextBlock->SetColorAndOpacity(FSlateColor(FColor(255, 255, 20)));
+			FSlateColor color = FColor(255, 255, 0);
+			PlayerNameTextBlock->SetColorAndOpacity(color);
+			IsAliveTextBlock->SetColorAndOpacity(color);
+			KillsTextBlock->SetColorAndOpacity(color);
 		}
 	}
 }
@@ -27,16 +29,11 @@ void UGnirutPlayerListItem::SetIsAlive(bool isAlive)
 		else
 		{
 			IsAliveTextBlock->SetText(FText::FromString("(dead)"));
-			if (bIsLocalPlayer)
-			{
-				PlayerNameTextBlock->SetColorAndOpacity(FSlateColor(FColor(110, 110, 20)));
-				IsAliveTextBlock->SetColorAndOpacity(FSlateColor(FColor(110, 110, 20)));
-			}
-			else
-			{
-				PlayerNameTextBlock->SetColorAndOpacity(FSlateColor(FColor(120, 120, 120)));
-				IsAliveTextBlock->SetColorAndOpacity(FSlateColor(FColor(120, 120, 120)));
-			}
+
+			FSlateColor color = bIsLocalPlayer ? FColor(110, 110, 20) : FColor(120, 120, 120);
+			PlayerNameTextBlock->SetColorAndOpacity(color);
+			IsAliveTextBlock->SetColorAndOpacity(color);
+			KillsTextBlock->SetColorAndOpacity(color);
 		}
 	}
 }
@@ -44,4 +41,11 @@ void UGnirutPlayerListItem::SetIsAlive(bool isAlive)
 void UGnirutPlayerListItem::SetIsLocalPlayer(bool isLocalPlayer)
 {
 	bIsLocalPlayer = isLocalPlayer;
+}
+
+void UGnirutPlayerListItem::SetKillsTextBlock(int32 HumanPlayerKills, int32 AIPlayerKills)
+{
+	if (KillsTextBlock) {
+		KillsTextBlock->SetText(FText::FromString("killed " + FString::FromInt(HumanPlayerKills) + " Human, " + FString::FromInt(AIPlayerKills) + " AI"));
+	}
 }

@@ -41,15 +41,22 @@ FString AGnirutPlayerState::GetPlayerNickName() const
 	return PlayerNickName;
 }
 
+bool AGnirutPlayerState::GetIsAlive() const
+{
+	return bIsAlive;
+}
+
 void AGnirutPlayerState::AddAIPlayerKills()
 {
 	++AIPlayerKills;
+	UpdateKills();
 	UE_LOG(LogTemp, Warning, TEXT("[Player %s] Killed %d AI(s)."), *GetPlayerNickName(), GetAIPlayerKills());
 }
 
 void AGnirutPlayerState::AddHumanPlayerKills()
 {
 	++HumanPlayerKills;
+	UpdateKills();
 	UE_LOG(LogTemp, Warning, TEXT("[Player %s] Killed %d Human(s)."), *GetPlayerNickName(), GetHumanPlayerKills());
 }
 
@@ -93,6 +100,30 @@ void AGnirutPlayerState::UpdatePlayerAlive()
 			if (GPL)
 			{
 				GPL->UpdatePlayerAlive(GetPlayerId(), bIsAlive);
+			}
+		}
+	}
+}
+
+void AGnirutPlayerState::OnRep_Kills()
+{
+	UpdateKills();
+}
+
+void AGnirutPlayerState::UpdateKills()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UGnirutPlayerList::StaticClass(), false);
+
+		for (UUserWidget* UW : FoundWidgets)
+		{
+			UGnirutPlayerList* GPL = Cast<UGnirutPlayerList>(UW);
+			if (GPL)
+			{
+				GPL->UpdateKills(GetPlayerId(), HumanPlayerKills, AIPlayerKills);
 			}
 		}
 	}

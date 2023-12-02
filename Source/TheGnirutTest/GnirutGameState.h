@@ -51,6 +51,10 @@ public:
 	void PlayerLogin();
 	void PlayerLogin_Implementation();
 
+	UFUNCTION(Server, Reliable)
+	void PlayerLogout();
+	void PlayerLogout_Implementation();
+
 	int32 GetNumberOfHumanPlayers();
 	int32 GetNumberOfAIPlayers();
 

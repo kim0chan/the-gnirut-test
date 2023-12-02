@@ -21,6 +21,7 @@ public:
 	int32 GetTotalPlayerKills() const;
 	int32 GetPlayerIndex() const;
 	FString GetPlayerNickName()	const;
+	bool GetIsAlive() const;
 
 	void AddAIPlayerKills();
 	void AddHumanPlayerKills();
@@ -35,16 +36,20 @@ public:
 	void OnRep_SetDead();
 	void UpdatePlayerAlive();
 
+	UFUNCTION()
+	void OnRep_Kills();
+	void UpdateKills();
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_SetDead, BlueprintReadOnly, Category = "PlayerState")
 	bool bIsAlive;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "PlayerState")
+	UPROPERTY(ReplicatedUsing = OnRep_Kills, BlueprintReadOnly, Category = "PlayerState")
 	int32 AIPlayerKills;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "PlayerState")
+	UPROPERTY(ReplicatedUsing = OnRep_Kills, BlueprintReadOnly, Category = "PlayerState")
 	int32 HumanPlayerKills;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "PlayerState")

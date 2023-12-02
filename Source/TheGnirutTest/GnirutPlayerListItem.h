@@ -22,10 +22,15 @@ public:
 
 	void SetIsLocalPlayer(bool isLocalPlayer);
 
+	void SetKillsTextBlock(int32 HumanPlayerKills, int32 AIPlayerKills);
+
 protected:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* PlayerNameTextBlock;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* IsAliveTextBlock;
+	UTextBlock* IsAliveTextBlock;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UTextBlock* KillsTextBlock;
 };

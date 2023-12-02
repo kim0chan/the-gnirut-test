@@ -38,6 +38,8 @@ void UGnirutPlayerList::UpdatePlayerList()
 							PLI->SetIsLocalPlayer(GPS->GetPlayerController()->IsLocalController());
 						}
 						PLI->SetPlayerNameTextBlock(FText::FromString(GPS->GetPlayerNickName()));
+						PLI->SetIsAlive(GPS->GetIsAlive());
+						PLI->SetKillsTextBlock(GPS->GetHumanPlayerKills(), GPS->GetAIPlayerKills());
 						// update additional info
 						PlayerScrollBox->AddChild(PLI);
 						PlayerListItemByPlayerID.Add(GPS->GetPlayerId(), PLI);
@@ -54,5 +56,14 @@ void UGnirutPlayerList::UpdatePlayerAlive(int32 PlayerID, bool isAlive)
 	if (PLI)
 	{
 		(*PLI)->SetIsAlive(isAlive);
+	}
+}
+
+void UGnirutPlayerList::UpdateKills(int32 PlayerID, int32 HumanPlayerKills, int32 AIPlayerKills)
+{
+	UGnirutPlayerListItem** PLI = PlayerListItemByPlayerID.Find(PlayerID);
+	if (PLI)
+	{
+		(*PLI)->SetKillsTextBlock(HumanPlayerKills, AIPlayerKills);
 	}
 }

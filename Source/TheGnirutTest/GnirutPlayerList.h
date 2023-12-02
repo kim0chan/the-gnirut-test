@@ -27,6 +27,8 @@ public:
 
 	void UpdatePlayerAlive(int32 PlayerID, bool isAlive);
 
+	void UpdateKills(int32 PlayerID, int32 HumanPlayerKills, int32 AIPlayerKills);
+
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UGnirutPlayerListItem> PlayerListItemClass;
 

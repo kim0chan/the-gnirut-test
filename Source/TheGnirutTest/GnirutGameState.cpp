@@ -130,6 +130,14 @@ void AGnirutGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AGnirutGameState, AllPlayerStates);
 }
 
+void AGnirutGameState::PlayerLogout_Implementation()
+{
+	NumberOfHumanPlayers--;
+	UpdateNumberOfHumanPlayers();
+
+	CheckGameEnd_Implementation();
+}
+
 int32 AGnirutGameState::GetNumberOfHumanPlayers() {
 	return NumberOfHumanPlayers;
 }

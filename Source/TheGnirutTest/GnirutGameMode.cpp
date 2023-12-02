@@ -77,6 +77,12 @@ void AGnirutGameMode::PostLogin(APlayerController* NewPlayer)
 
 void AGnirutGameMode::Logout(AController* Exiting)
 {
+	AGnirutPlayerState* GPS = Exiting->GetPlayerState<AGnirutPlayerState>();
+	if (GPS && GPS->GetIsAlive())
+	{
+		AGnirutGameState* GnirutGameState = GetGameState<AGnirutGameState>();
+		GnirutGameState->PlayerLogout_Implementation();
+	}
 
 	AGnirutPlayerController* GPC = Cast<AGnirutPlayerController>(Exiting);
 	if (GPC)
