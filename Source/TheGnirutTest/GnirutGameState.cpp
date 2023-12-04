@@ -39,7 +39,7 @@ void AGnirutGameState::UpdateNumberOfHumanPlayers()
 
 void AGnirutGameState::SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnirutHumanPlayer* Victim)
 {
-	FString AttackerNickname = (Attacker) ? Attacker->GetPlayerState<AGnirutPlayerState>()->GetPlayerNickName() : "A player";
+	FString AttackerNickname = (Attacker) ? Attacker->GetPlayerState<AGnirutPlayerState>()->GetPlayerName() : "A player";
 	FString VictimNickname = "an AI";
 
 	if (Victim)
@@ -51,7 +51,7 @@ void AGnirutGameState::SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnirutHuman
 			if (!PossessingPawn)	continue;	// Possessing Pawn Is Dead.
 			if (Victim->GetUniqueID() == PossessingPawn->GetUniqueID())
 			{
-				VictimNickname = GPS->GetPlayerNickName();
+				VictimNickname = GPS->GetPlayerName();
 			}
 		}
 	}

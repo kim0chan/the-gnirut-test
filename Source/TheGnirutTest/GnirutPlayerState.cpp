@@ -6,6 +6,8 @@
 #include "KillLogHUD.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "GnirutPlayerList.h"
+#include "GnirutGameInstance.h"
+#include "GnirutGameMode.h"
 
 AGnirutPlayerState::AGnirutPlayerState()
 {
@@ -13,7 +15,6 @@ AGnirutPlayerState::AGnirutPlayerState()
 	AIPlayerKills = 0;
 	HumanPlayerKills = 0;
 	PlayerIndex = 0;
-	SetPlayerNickName("Placeholder");
 }
 
 int32 AGnirutPlayerState::GetAIPlayerKills() const
@@ -36,11 +37,6 @@ int32 AGnirutPlayerState::GetPlayerIndex() const
 	return PlayerIndex;
 }
 
-FString AGnirutPlayerState::GetPlayerNickName() const
-{
-	return PlayerNickName;
-}
-
 bool AGnirutPlayerState::GetIsAlive() const
 {
 	return bIsAlive;
@@ -50,19 +46,59 @@ void AGnirutPlayerState::AddAIPlayerKills()
 {
 	++AIPlayerKills;
 	UpdateKills();
-	UE_LOG(LogTemp, Warning, TEXT("[Player %s] Killed %d AI(s)."), *GetPlayerNickName(), GetAIPlayerKills());
+	UE_LOG(LogTemp, Warning, TEXT("[Player %s] Killed %d AI(s)."), *GetPlayerName(), GetAIPlayerKills());
 }
 
 void AGnirutPlayerState::AddHumanPlayerKills()
 {
 	++HumanPlayerKills;
 	UpdateKills();
-	UE_LOG(LogTemp, Warning, TEXT("[Player %s] Killed %d Human(s)."), *GetPlayerNickName(), GetHumanPlayerKills());
+	UE_LOG(LogTemp, Warning, TEXT("[Player %s] Killed %d Human(s)."), *GetPlayerName(), GetHumanPlayerKills());
 }
 
-void AGnirutPlayerState::SetPlayerNickName(const FString& NewNickName)
+void AGnirutPlayerState::InitPlayerName()
 {
-	PlayerNickName = NewNickName;
+	if (GetOwningController()->IsLocalPlayerController()) {
+		if (UGnirutGameInstance* GGI = GetGameInstance<UGnirutGameInstance>()) {
+			FString name = GGI->GetPlayerName();
+			SetPlayerNameAndUpdate(name);
+		}
+	}
+	else {
+		ClientSetPlayerNameFromGameInstance();
+	}
+}
+
+void AGnirutPlayerState::ClientSetPlayerNameFromGameInstance_Implementation()
+{
+	if (UGnirutGameInstance* GGI = GetGameInstance<UGnirutGameInstance>()) {
+		FString name = GGI->GetPlayerName();
+		ServerSetPlayerNameFromGameInstance(name);
+
+		if (!name.IsEmpty()) SetPlayerName(name);
+		else SetPlayerName(FString::Printf(TEXT("Player %d"), GetPlayerIndex()));
+	}
+}
+
+void AGnirutPlayerState::ServerSetPlayerNameFromGameInstance_Implementation(const FString& PlayerName)
+{
+	SetPlayerNameAndUpdate(PlayerName);
+}
+
+void AGnirutPlayerState::SetPlayerNameAndUpdate(const FString& PlayerName)
+{
+	if (!PlayerName.IsEmpty()) SetPlayerName(PlayerName);
+	else SetPlayerName(FString::Printf(TEXT("Player %d"), GetPlayerIndex()));	
+
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		AGnirutGameMode* GGM = Cast<AGnirutGameMode>(world->GetAuthGameMode());
+		if (GGM)
+		{
+			GGM->UpdatePlayerList();
+		}
+	}
 }
 
 void AGnirutPlayerState::SetPlayerIndex(int32 NewIndex)
@@ -166,5 +202,4 @@ void AGnirutPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(AGnirutPlayerState, AIPlayerKills);
 	DOREPLIFETIME(AGnirutPlayerState, HumanPlayerKills);
 	DOREPLIFETIME(AGnirutPlayerState, PlayerIndex);
-	DOREPLIFETIME(AGnirutPlayerState, PlayerNickName);
 }

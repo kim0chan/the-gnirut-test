@@ -5,7 +5,7 @@
 #include "Components/TextBlock.h"
 
 void UGnirutPlayerListItem::SetPlayerNameTextBlock(FText playerName)
-{
+{	
 	if (PlayerNameTextBlock && IsAliveTextBlock)
 	{
 		PlayerNameTextBlock->SetText(playerName);

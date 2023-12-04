@@ -20,7 +20,7 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	void InitPlayerName(const uint32 key);
+	void InitPlayerName();
 
 protected:
 	UFUNCTION(Server, Unreliable)
@@ -32,12 +32,12 @@ protected:
 	void UpdatePlayerReady();
 
 	UFUNCTION(Client, Reliable)
-	void ClientSetPlayerNameFromGameInstance(const uint32& key);
+	void ClientSetPlayerNameFromGameInstance();
 
 	UFUNCTION(Server, Reliable)
-	void ServerSetPlayerNameFromGameInstance(const FString& PlayerName, const uint32& key);
+	void ServerSetPlayerNameFromGameInstance(const FString& PlayerName);
 
-	void SetPlayerNameAndUpdate(const FString& PlayerName, const uint32& key);
+	void SetPlayerNameAndUpdate(const FString& PlayerName);
 
 	UPROPERTY(ReplicatedUsing = OnRep_ReverseIsReady)
 	bool bIsReady = false;

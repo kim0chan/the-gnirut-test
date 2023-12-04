@@ -37,7 +37,7 @@ void UGnirutPlayerList::UpdatePlayerList()
 						if (GPS->GetPlayerController()) {
 							PLI->SetIsLocalPlayer(GPS->GetPlayerController()->IsLocalController());
 						}
-						PLI->SetPlayerNameTextBlock(FText::FromString(GPS->GetPlayerNickName()));
+						PLI->SetPlayerNameTextBlock(FText::FromString(GPS->GetPlayerName()));
 						PLI->SetIsAlive(GPS->GetIsAlive());
 						PLI->SetKillsTextBlock(GPS->GetHumanPlayerKills(), GPS->GetAIPlayerKills());
 						// update additional info

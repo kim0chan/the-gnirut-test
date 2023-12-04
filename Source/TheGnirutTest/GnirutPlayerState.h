@@ -20,12 +20,11 @@ public:
 	int32 GetHumanPlayerKills() const;
 	int32 GetTotalPlayerKills() const;
 	int32 GetPlayerIndex() const;
-	FString GetPlayerNickName()	const;
 	bool GetIsAlive() const;
 
 	void AddAIPlayerKills();
 	void AddHumanPlayerKills();
-	void SetPlayerNickName(const FString& NewNickName);
+	void InitPlayerName();
 	void SetPlayerIndex(int32 NewIndex);
 	void SetKillLogHUD(const FString& Content);
 
@@ -55,8 +54,13 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "PlayerState")
 	int32 PlayerIndex;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "PlayerState")
-	FString PlayerNickName;
+	UFUNCTION(Client, Reliable)
+	void ClientSetPlayerNameFromGameInstance();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetPlayerNameFromGameInstance(const FString& PlayerName);
+
+	void SetPlayerNameAndUpdate(const FString& PlayerName);
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetKillLogHUD(const FString& Content);
