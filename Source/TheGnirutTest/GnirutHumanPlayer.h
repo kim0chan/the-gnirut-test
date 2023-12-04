@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GnirutCharacter.h"
+#include "ObjectiveItem.h"
 #include "GnirutHumanPlayer.generated.h"
 
 /**
@@ -63,8 +64,12 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public AGnirutCharacter
 	float AttackRadius;
 
 
+
 public:
 	AGnirutHumanPlayer();
+
+	UPROPERTY()
+	AObjectiveItem* HoldingItem;
 
 protected:
 

@@ -19,6 +19,8 @@
 
 AGnirutHumanPlayer::AGnirutHumanPlayer()
 {
+	HoldingItem = nullptr;
+
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -270,6 +272,13 @@ void AGnirutHumanPlayer::Dying()
 	AController* CharacterController = GetController();
 	FVector ActorLocation = GetActorLocation();
 	FRotator ActorRotation = GetActorRotation();
+
+	if (HoldingItem)
+	{
+		HoldingItem->DropItem();
+		HoldingItem = nullptr;
+	}
+
 	Super::Dying();
 
 	if (CharacterController)
