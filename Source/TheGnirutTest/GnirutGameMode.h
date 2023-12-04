@@ -14,6 +14,10 @@ class AGnirutGameMode : public AGameModeBase
 public:
 	AGnirutGameMode();
 
+	int32 NumPlayerStarts;
+
+	TArray<AActor*> PlayerStarts;
+
 	UFUNCTION(BlueprintCallable, Category = "Player")
 	int32 GetCurrentPlayerCount();
 
@@ -24,6 +28,8 @@ public:
 	virtual void Logout(AController* Exiting) override;
 
 	void UpdatePlayerList();
+
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 };
 
 

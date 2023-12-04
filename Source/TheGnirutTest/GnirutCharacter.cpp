@@ -4,6 +4,7 @@
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpectatorPawn.h"
 #include "GnirutAnimInstance.h"
 #include "GnirutHumanPlayer.h"
 #include "GnirutGameMode.h"

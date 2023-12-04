@@ -8,6 +8,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "GnirutHumanPlayer.h"
 #include "GnirutPlayerController.h"
+#include "GameFramework/PlayerStart.h"
+#include "Math/UnrealMathUtility.h"
 
 AGnirutGameMode::AGnirutGameMode()
 {
@@ -23,6 +25,9 @@ AGnirutGameMode::AGnirutGameMode()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
+	NumPlayerStarts = PlayerStarts.Num();
 
 	GameStateClass = AGnirutGameState::StaticClass();
 	PlayerStateClass = AGnirutPlayerState::StaticClass();
@@ -91,5 +96,21 @@ void AGnirutGameMode::UpdatePlayerList()
 	if (GGS)
 	{
 		GGS->UpdateAllPlayerStates();
+	}
+}
+
+AActor* AGnirutGameMode::ChoosePlayerStart_Implementation(AController* Player)
+{
+	if (NumPlayerStarts > 0)
+	{
+		int32 RandomIndex = FMath::RandRange(0, NumPlayerStarts - 1);
+		AActor* ChosenPlayerStart = PlayerStarts[RandomIndex];
+		PlayerStarts.RemoveAt(RandomIndex);
+		NumPlayerStarts--;
+		return ChosenPlayerStart;
+	}
+	else
+	{
+		return Super::ChoosePlayerStart_Implementation(Player);
 	}
 }
