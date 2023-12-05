@@ -7,6 +7,8 @@
 #include "GnirutPlayerController.h"
 #include "GnirutGameMode.h"
 #include "GnirutGameState.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "GnirutPlayerList.h"
 
 void UGameEndHUD::NativeConstruct()
 {
@@ -20,6 +22,26 @@ void UGameEndHUD::NativeConstruct()
 	if (LeaveButton)
 	{
 		LeaveButton->OnClicked.AddDynamic(this, &ThisClass::OnLeaveButtonClicked);
+	}
+
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		AGnirutGameState* GGS = Cast<AGnirutGameState>(world->GetGameState());
+		int NumberOfHumanPlayers = GGS ? GGS->GetNumberOfHumanPlayers() : 1;
+
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UGnirutPlayerList::StaticClass(), false);
+
+		for (UUserWidget* UW : FoundWidgets)
+		{
+			UGnirutPlayerList* GPL = Cast<UGnirutPlayerList>(UW);
+			if (GPL)
+			{
+				GPL->UpdatePlayerList();
+				GPL->UpdateNumberOfHumanPlayers(NumberOfHumanPlayers);
+			}
+		}
 	}
 }
 
