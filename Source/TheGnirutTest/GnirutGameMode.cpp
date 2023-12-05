@@ -70,7 +70,7 @@ void AGnirutGameMode::Logout(AController* Exiting)
 	if (GPS && GPS->GetIsAlive())
 	{
 		AGnirutGameState* GnirutGameState = GetGameState<AGnirutGameState>();
-		GnirutGameState->PlayerLogout_Implementation();
+		GnirutGameState->DecrementPlayerCounts_Implementation(false);
 	}
 
 	AGnirutPlayerController* GPC = Cast<AGnirutPlayerController>(Exiting);
@@ -87,6 +87,16 @@ void AGnirutGameMode::Logout(AController* Exiting)
 	}
 
 	Super::Logout(Exiting);
+}
+
+void AGnirutGameMode::TravleToWaiting()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		bUseSeamlessTravel = true;
+		world->ServerTravel("/Game/Waiting/WaitingMap?listen");
+	}
 }
 
 

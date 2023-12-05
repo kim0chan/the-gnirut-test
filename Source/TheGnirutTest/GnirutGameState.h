@@ -2,16 +2,18 @@
 
 #pragma once
 
-#include "GnirutHumanPlayer.h"
-#include "GnirutPlayerState.h"
-#include "GnirutPlayerController.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "GnirutGameState.generated.h"
 
-/**
- *
- */
+UENUM(BlueprintType)
+enum class EVictoryCondition : uint8
+{
+	VC_None UMETA(DisplayName = "None"),
+	VC_LastManStanding UMETA(DisplayName = "Last Man Standing"),
+	VC_GetItem UMETA(DisplayName = "Get Item"),
+};
+
 UCLASS()
 class THEGNIRUTTEST_API AGnirutGameState : public AGameStateBase
 {
@@ -30,7 +32,7 @@ public:
 	int32 NumberOfHumanPlayers;
 
 	UFUNCTION(Category = "Game State")
-	void SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnirutHumanPlayer* Victim);
+	void SetKillLogInfo(class AGnirutHumanPlayer* Attacker, AGnirutHumanPlayer* Victim);
 
 	UFUNCTION(Category = "Game State")
 	void UpdateKillLogInfo(const FString& KillLogMessage);
@@ -43,6 +45,10 @@ public:
 	void CheckGameEnd();
 	void CheckGameEnd_Implementation();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void HandleGameEnd(class AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition);
+	void HandleGameEnd_Implementation(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition);
+
 	UFUNCTION(Server, Reliable)
 	void InitPlayerCounts(int32 numAI, int32 numHuman);
 	void InitPlayerCounts_Implementation(int32 numAI, int32 numHuman);
@@ -50,10 +56,6 @@ public:
 	UFUNCTION(Server, Reliable)
 	void PlayerLogin();
 	void PlayerLogin_Implementation();
-
-	UFUNCTION(Server, Reliable)
-	void PlayerLogout();
-	void PlayerLogout_Implementation();
 
 	int32 GetNumberOfHumanPlayers();
 	int32 GetNumberOfAIPlayers();

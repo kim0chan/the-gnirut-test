@@ -4,14 +4,19 @@
 #include "GnirutPlayerController.h"
 #include "KillLogHUD.h"
 #include "TabkeyPlayerHUD.h"
-#include "Blueprint/UserWidget.h"
+#include "GameEndHUD.h"
 #include "GnirutGameMode.h"
+#include "GnirutGameState.h"
+#include "GnirutPlayerState.h"
+#include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 
 AGnirutPlayerController::AGnirutPlayerController()
 {
 	PlayerHUDClass = nullptr;
 	PlayerHUD = nullptr;
+	GameEndHUDClass = nullptr;
+	GameEndHUD = nullptr;
 }
 
 void AGnirutPlayerController::BeginPlay()
@@ -55,6 +60,25 @@ void AGnirutPlayerController::ToggleTabMenuVisibility()
 				TPH->ToggleVisibility();
 				SetShowMouseCursor(!ShouldShowMouseCursor());
 			}
+		}
+	}
+}
+
+void AGnirutPlayerController::HandleGameEnd(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition)
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->RemoveFromParent();
+		PlayerHUD = nullptr;
+	}
+	
+	if (IsLocalController() && GameEndHUDClass && GetPawn()) {
+		GameEndHUD = CreateWidget<UGameEndHUD>(this, GameEndHUDClass);
+		if (GameEndHUD) {
+			GameEndHUD->SetWinnerTextBlock(WinningPlayer->GetPlayerName());
+			GameEndHUD->SetVictoryConditionTextBlock(VictoryCondition);
+			if (!HasAuthority()) GameEndHUD->SetBackToWaitingButtonVisibility(ESlateVisibility::Collapsed);
+			GameEndHUD->AddToViewport();
 		}
 	}
 }

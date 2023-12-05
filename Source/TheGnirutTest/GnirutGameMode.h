@@ -27,6 +27,8 @@ public:
 
 	virtual void Logout(AController* Exiting) override;
 
+	void TravleToWaiting();
+
 	void UpdatePlayerList();
 
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;

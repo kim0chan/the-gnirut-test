@@ -6,6 +6,9 @@
 #include "Net/UnrealNetwork.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "GnirutPlayerList.h"
+#include "GnirutPlayerController.h"
+#include "GnirutPlayerState.h"
+#include "GnirutHumanPlayer.h"
 
 AGnirutGameState::AGnirutGameState()
 { 
@@ -99,10 +102,37 @@ void AGnirutGameState::DecrementPlayerCounts_Implementation(bool isAIPlayer)
 
 void AGnirutGameState::CheckGameEnd_Implementation()
 {
-	UE_LOG(LogTemp, Display, TEXT("[GameState>CheckGameEnd] AI: %d, Human: %d"), NumberOfAIPlayers, NumberOfHumanPlayers);
+	AGnirutPlayerState* Winner = nullptr;
+	EVictoryCondition Condition = EVictoryCondition::VC_None;
+
 	if (NumberOfHumanPlayers <= 1)
 	{
-		UE_LOG(LogTemp, Display, TEXT("GAME ENDED."));
+		Condition = EVictoryCondition::VC_LastManStanding;
+		for (APlayerState* PS : PlayerArray)
+		{
+			AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(PS);
+			if (GPS && GPS->GetIsAlive())
+			{	
+				Winner = GPS;
+				break;
+			}
+		}
+	}
+
+	if (Winner && Condition != EVictoryCondition::VC_None) 
+		HandleGameEnd(Winner, Condition);
+}
+
+void AGnirutGameState::HandleGameEnd_Implementation(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition)
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		AGnirutPlayerController* GPC = Cast<AGnirutPlayerController>(world->GetFirstPlayerController());
+		if (GPC && GPC->IsLocalPlayerController())
+		{
+			GPC->HandleGameEnd(WinningPlayer, VictoryCondition);
+		}
 	}
 }
 
@@ -128,14 +158,6 @@ void AGnirutGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME_CONDITION(AGnirutGameState, NumberOfAIPlayers, COND_None);
 	DOREPLIFETIME_CONDITION(AGnirutGameState, NumberOfHumanPlayers, COND_None);
 	DOREPLIFETIME(AGnirutGameState, AllPlayerStates);
-}
-
-void AGnirutGameState::PlayerLogout_Implementation()
-{
-	NumberOfHumanPlayers--;
-	UpdateNumberOfHumanPlayers();
-
-	CheckGameEnd_Implementation();
 }
 
 int32 AGnirutGameState::GetNumberOfHumanPlayers() {
