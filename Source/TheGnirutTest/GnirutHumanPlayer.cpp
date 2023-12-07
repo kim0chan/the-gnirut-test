@@ -85,6 +85,9 @@ void AGnirutHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		// Attacking
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AGnirutHumanPlayer::Attack);
 
+		// Interacting
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AGnirutHumanPlayer::Interact);
+
 		// Tab Menu toggle
 		EnhancedInputComponent->BindAction(TabkeyAction, ETriggerEvent::Started, this, &AGnirutHumanPlayer::PressTab);
 
@@ -285,5 +288,27 @@ void AGnirutHumanPlayer::Dying()
 	{
 		ASpectatorPawn* SpectatorPawn = GetWorld()->SpawnActor<ASpectatorPawn>(ASpectatorPawn::StaticClass(), ActorLocation, ActorRotation);
 		CharacterController->Possess(SpectatorPawn);
+	}
+}
+
+void AGnirutHumanPlayer::Interact()
+{
+	FVector Start = FollowCamera->GetComponentLocation() + FVector(0, 0, 50.0f);
+	FVector End = Start + FollowCamera->GetForwardVector() * 500.0f;
+
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	{
+		if (AObjectiveItem* Item = Cast<AObjectiveItem>(HitResult.GetActor()))
+		{
+			UE_LOG(LogTemp, Display, TEXT("Occupy Item!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Display, TEXT("Not an Item!"));
+		}
 	}
 }

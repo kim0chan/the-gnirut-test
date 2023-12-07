@@ -53,6 +53,10 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public AGnirutCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
 
+	/** Interact Input Action*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 	/** Tabkey Input Action*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* TabkeyAction;
@@ -117,6 +121,9 @@ protected:
 
 	//UPROPERTY()
 	//class UGnirutAnimInstance* AnimInstance;
+
+	UFUNCTION()
+	void Interact();
 
 	UFUNCTION()
 	void PressTab();

@@ -15,7 +15,7 @@ AObjectiveItem::AObjectiveItem()
 	OccupyingPlayer = nullptr;
 	IsOccupied = false;
 	OccupiedTime = 0.0f;
-	HeightOffset = 20.0f;
+	HeightOffset = 50.0f;
 }
 
 void AObjectiveItem::BeginPlay()
@@ -71,23 +71,13 @@ void AObjectiveItem::MulticastDropItem_Implementation()
 }
 */
 
-void AObjectiveItem::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
-{
-	AGnirutHumanPlayer* Toucher = Cast<AGnirutHumanPlayer>(Other);
-	if (Toucher)
-	{
-		OccupyItem(Toucher);
-	}
-}
-
 void AObjectiveItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsOccupied && OccupyingPlayer)
+	if (!IsOccupied)
 	{
-		FVector NewLocation = OccupyingPlayer->GetActorLocation() + FVector(0, 0, HeightOffset);
-		FRotator NewRotation = OccupyingPlayer->GetActorRotation();
-		SetActorLocationAndRotation(NewLocation, NewRotation);
+		FRotator NewRotation = GetActorRotation() + FRotator(0, 200.0f * DeltaTime, 0);
+		SetActorRotation(NewRotation);
 	}
 }
