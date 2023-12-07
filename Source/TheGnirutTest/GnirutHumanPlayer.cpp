@@ -16,6 +16,7 @@
 #include "GnirutHumanPlayer.h"
 #include "GnirutGameState.h"
 #include "GnirutPlayerController.h"
+#include "GnirutSpectatorPawn.h"
 
 AGnirutHumanPlayer::AGnirutHumanPlayer()
 {
@@ -135,7 +136,7 @@ void AGnirutHumanPlayer::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
-	}
+	}	
 }
 
 void AGnirutHumanPlayer::Run(const FInputActionValue& Value)
@@ -272,9 +273,12 @@ void AGnirutHumanPlayer::Dying()
 	FRotator ActorRotation = GetActorRotation();
 	Super::Dying();
 
-	if (CharacterController)
+	if (CharacterController && SpectatorPawnClass)
 	{
-		ASpectatorPawn* SpectatorPawn = GetWorld()->SpawnActor<ASpectatorPawn>(ASpectatorPawn::StaticClass(), ActorLocation, ActorRotation);
-		CharacterController->Possess(SpectatorPawn);
+		AGnirutSpectatorPawn* SpectatorPawn = GetWorld()->SpawnActor<AGnirutSpectatorPawn>(SpectatorPawnClass, ActorLocation, ActorRotation);
+		if (SpectatorPawn)
+		{
+			CharacterController->Possess(SpectatorPawn);
+		}
 	}
 }

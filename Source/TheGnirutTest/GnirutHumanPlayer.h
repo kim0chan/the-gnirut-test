@@ -62,6 +62,8 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public AGnirutCharacter
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	float AttackRadius;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AGnirutSpectatorPawn> SpectatorPawnClass;
 
 public:
 	AGnirutHumanPlayer();
