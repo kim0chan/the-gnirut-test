@@ -72,8 +72,11 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public AGnirutCharacter
 public:
 	AGnirutHumanPlayer();
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	AObjectiveItem* HoldingItem;
+
+	UFUNCTION()
+	void SetHoldingItem(AObjectiveItem* Item);
 
 protected:
 
@@ -122,8 +125,33 @@ protected:
 	//UPROPERTY()
 	//class UGnirutAnimInstance* AnimInstance;
 
-	UFUNCTION()
 	void Interact();
+
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(FVector Start, FVector End);
+	void ServerInteract_Implementation(FVector Start, FVector End);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastInteract(FVector Start, FVector End);
+	void MulticastInteract_Implementation(FVector Start, FVector End);
+
+	void DropItem();
+
+	UFUNCTION(Server, Reliable)
+	void ServerDropItem(FVector DropLocation);
+	void ServerDropItem_Implementation(FVector DropLocation);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastDropItem(FVector DropLocation);
+	void MulticastDropItem_Implementation(FVector DropLocation);
+
+	//UFUNCTION(Server, Reliable)
+	//void ServerDropItem();
+	//void ServerDropItem_Implementation();
+
+	//UFUNCTION(NetMulticast, Reliable)
+	//void MulticastDropItem();
+	//void MulticastDropItem_Implementation();
 
 	UFUNCTION()
 	void PressTab();
@@ -137,6 +165,8 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void Dying() override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
 	/** Returns CameraBoom subobject **/

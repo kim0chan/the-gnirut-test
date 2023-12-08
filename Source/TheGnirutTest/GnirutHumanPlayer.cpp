@@ -2,6 +2,7 @@
 
 
 #include "GnirutHumanPlayer.h"
+#include "Net/UnrealNetwork.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -96,6 +97,13 @@ void AGnirutHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AGnirutHumanPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AGnirutHumanPlayer, HoldingItem, COND_OwnerOnly);
 }
 
 void AGnirutHumanPlayer::PressTab()
@@ -278,8 +286,7 @@ void AGnirutHumanPlayer::Dying()
 
 	if (HoldingItem)
 	{
-		HoldingItem->DropItem();
-		HoldingItem = nullptr;
+		DropItem();
 	}
 
 	Super::Dying();
@@ -296,6 +303,16 @@ void AGnirutHumanPlayer::Interact()
 	FVector Start = FollowCamera->GetComponentLocation() + FVector(0, 0, 50.0f);
 	FVector End = Start + FollowCamera->GetForwardVector() * 500.0f;
 
+	ServerInteract(Start, End);
+}
+
+void AGnirutHumanPlayer::ServerInteract_Implementation(FVector Start, FVector End)
+{
+	MulticastInteract(Start, End);
+}
+
+void AGnirutHumanPlayer::MulticastInteract_Implementation(FVector Start, FVector End)
+{
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
@@ -304,11 +321,31 @@ void AGnirutHumanPlayer::Interact()
 	{
 		if (AObjectiveItem* Item = Cast<AObjectiveItem>(HitResult.GetActor()))
 		{
-			UE_LOG(LogTemp, Display, TEXT("Occupy Item!"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Display, TEXT("Not an Item!"));
+			Item->OccupyItem(this);
 		}
 	}
+}
+
+void AGnirutHumanPlayer::DropItem()
+{
+	if (!HoldingItem)	return;
+	FVector DropLocation = GetActorLocation() - FVector(0, 0, HoldingItem->HeightOffset);
+	ServerDropItem(DropLocation);
+}
+
+void AGnirutHumanPlayer::ServerDropItem_Implementation(FVector DropLocation)
+{
+	MulticastDropItem(DropLocation);
+}
+
+void AGnirutHumanPlayer::MulticastDropItem_Implementation(FVector DropLocation)
+{
+	HoldingItem->SetActorLocation(DropLocation);
+	HoldingItem->UnOccupyItem();
+	HoldingItem = nullptr;
+}
+
+void AGnirutHumanPlayer::SetHoldingItem(AObjectiveItem* Item)
+{
+	HoldingItem = Item;
 }

@@ -16,6 +16,7 @@ AObjectiveItem::AObjectiveItem()
 	IsOccupied = false;
 	OccupiedTime = 0.0f;
 	HeightOffset = 50.0f;
+	bReplicates = true;
 }
 
 void AObjectiveItem::BeginPlay()
@@ -32,15 +33,17 @@ void AObjectiveItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME_CONDITION(AObjectiveItem, OccupiedTime, COND_OwnerOnly);
 }
 
-void AObjectiveItem::OccupyItem(AGnirutHumanPlayer* Player)
+void AObjectiveItem::OccupyItem(class AGnirutHumanPlayer* Player)
 {
 	if (IsOccupied)		return;
-
-	//SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
-	OccupyingPlayer = Player;
-	IsOccupied = true;
-	Player->HoldingItem = this;
+	if (Player)
+	{
+		//SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		OccupyingPlayer = Player;
+		Player->SetHoldingItem(this);
+		IsOccupied = true;
+	}
 }
 
 void AObjectiveItem::UpdateOccupiedTime(float DeltaTime)
@@ -48,15 +51,11 @@ void AObjectiveItem::UpdateOccupiedTime(float DeltaTime)
 	;
 }
 
-void AObjectiveItem::DropItem()
-{
-	if (!IsOccupied)	return;
-	if (!HasAuthority()) return;
 
-	FVector DropLocation = GetActorLocation() + FVector(0, 0, -HeightOffset);
-	SetActorLocation(DropLocation);
+void AObjectiveItem::UnOccupyItem()
+{
+	if (!IsOccupied)		return;
 	IsOccupied = false;
-	OccupyingPlayer = nullptr;
 	SetActorEnableCollision(true);
 }
 /*
@@ -79,5 +78,12 @@ void AObjectiveItem::Tick(float DeltaTime)
 	{
 		FRotator NewRotation = GetActorRotation() + FRotator(0, 200.0f * DeltaTime, 0);
 		SetActorRotation(NewRotation);
+	}
+	else
+	{
+		FVector NewLocation = OccupyingPlayer->GetActorLocation() + FVector(0, 0, HeightOffset);
+		FRotator NewRotation = OccupyingPlayer->GetActorRotation();
+
+		SetActorLocationAndRotation(NewLocation, NewRotation);
 	}
 }

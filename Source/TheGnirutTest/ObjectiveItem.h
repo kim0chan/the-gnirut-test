@@ -40,7 +40,7 @@ public:
 	//void MulticastOccupyItem_Implementation(class AGnirutHumanPlayer* Player);
 
 	UFUNCTION()
-	void DropItem();
+	void UnOccupyItem();
 
 	//UFUNCTION(Server, Reliable)
 	//void ServerDropItem();
