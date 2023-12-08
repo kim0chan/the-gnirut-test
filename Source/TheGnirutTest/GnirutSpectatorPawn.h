@@ -35,6 +35,9 @@ class THEGNIRUTTEST_API AGnirutSpectatorPawn : public ASpectatorPawn
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* TabkeyAction;
 
+public:
+	void SetDefaultMappingContext();
+
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

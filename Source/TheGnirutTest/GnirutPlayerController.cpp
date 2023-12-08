@@ -13,6 +13,7 @@
 #include "GnirutSpectatorPawn.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "EnhancedInputSubsystems.h"
 
 AGnirutPlayerController::AGnirutPlayerController()
 {
@@ -92,6 +93,11 @@ void AGnirutPlayerController::HandleGameDefeat_Implementation(AGnirutPlayerState
 			GameDefeatHUD->SetDefeatedTextBlock(Attacker->GetPlayerName());
 		}
 	}
+
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->ClearAllMappings();
+	}
 }
 
 void AGnirutPlayerController::StartSpectate()
@@ -106,6 +112,12 @@ void AGnirutPlayerController::StartSpectate()
 	{
 		SetShowMouseCursor(false);
 		PlayerHUD->AddToViewport();
+	}
+
+	AGnirutSpectatorPawn* GSP = Cast<AGnirutSpectatorPawn>(GetPawn());
+	if (GSP)
+	{
+		GSP->SetDefaultMappingContext();
 	}
 }
 
@@ -133,6 +145,11 @@ void AGnirutPlayerController::HandleGameEnd(AGnirutPlayerState* WinningPlayer, E
 			if (!HasAuthority()) GameEndHUD->SetBackToWaitingButtonVisibility(ESlateVisibility::Collapsed);
 			GameEndHUD->AddToViewport();
 		}
+	}
+
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->ClearAllMappings();
 	}
 }
 
