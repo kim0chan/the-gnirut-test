@@ -19,8 +19,14 @@ public:
 	UPROPERTY(Replicated)
 	bool IsOccupied;
 
+	UPROPERTY(ReplicatedUsing = OnRep_RemainingTime)
+	float RemainingTime;
+
 	UPROPERTY(Replicated)
-	float OccupiedTime;
+	FString DisplayText;
+
+	UFUNCTION()
+	void OnRep_RemainingTime();
 
 	UPROPERTY(Replicated)
 	class AGnirutHumanPlayer* OccupyingPlayer;
@@ -31,31 +37,13 @@ public:
 	UFUNCTION()
 	void OccupyItem(class AGnirutHumanPlayer* Player);
 
-	//UFUNCTION(Server, Reliable)
-	//void ServerOccupyItem(class AGnirutHumanPlayer* Player);
-	//void ServerOccupyItem_Implementation(class AGnirutHumanPlayer* Player);
-
-	//UFUNCTION(NetMulticast, Reliable)
-	//void MulticastOccupyItem(class AGnirutHumanPlayer* Player);
-	//void MulticastOccupyItem_Implementation(class AGnirutHumanPlayer* Player);
-
 	UFUNCTION()
 	void UnOccupyItem();
 
-	//UFUNCTION(Server, Reliable)
-	//void ServerDropItem();
-	//void ServerDropItem_Implementation();
-
-	//UFUNCTION(NetMulticast, Reliable)
-	//void MulticastDropItem();
-	//void MulticastDropItem_Implementation();
-
 	UFUNCTION()
-	void UpdateOccupiedTime(float DeltaTime);
+	void UpdateRemainingTime(float DeltaTime);
 
-	//UFUNCTION(Server, Reliable)
-	//void ServerUpdateOccupiedTime(float DeltaTime);
-	//void ServerUpdateOccupiedTime_Implementation(float DeltaTime);
+	virtual void DrawHUD(class APlayerController* PC, class UCanvas* Canvas, FVector2D ViewportSize);
 
 protected:
 	virtual void BeginPlay() override;

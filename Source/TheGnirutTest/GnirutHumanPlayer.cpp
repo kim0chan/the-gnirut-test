@@ -328,7 +328,7 @@ void AGnirutHumanPlayer::MulticastInteract_Implementation(FVector Start, FVector
 
 void AGnirutHumanPlayer::DropItem()
 {
-	if (!HoldingItem)	return;
+	//if (!HoldingItem)	return;
 	FVector DropLocation = GetActorLocation() - FVector(0, 0, HoldingItem->HeightOffset);
 	ServerDropItem(DropLocation);
 }
@@ -340,9 +340,12 @@ void AGnirutHumanPlayer::ServerDropItem_Implementation(FVector DropLocation)
 
 void AGnirutHumanPlayer::MulticastDropItem_Implementation(FVector DropLocation)
 {
-	HoldingItem->SetActorLocation(DropLocation);
-	HoldingItem->UnOccupyItem();
-	HoldingItem = nullptr;
+	if (HoldingItem)
+	{
+		HoldingItem->SetActorLocation(DropLocation);
+		HoldingItem->UnOccupyItem();
+		HoldingItem = nullptr;
+	}
 }
 
 void AGnirutHumanPlayer::SetHoldingItem(AObjectiveItem* Item)

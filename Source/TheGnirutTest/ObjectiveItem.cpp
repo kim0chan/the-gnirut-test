@@ -14,9 +14,10 @@ AObjectiveItem::AObjectiveItem()
 	RootComponent = BoxMesh;
 	OccupyingPlayer = nullptr;
 	IsOccupied = false;
-	OccupiedTime = 0.0f;
 	HeightOffset = 50.0f;
 	bReplicates = true;
+	RemainingTime = 25.0f;
+	DisplayText = FString("0");
 }
 
 void AObjectiveItem::BeginPlay()
@@ -30,7 +31,9 @@ void AObjectiveItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME_CONDITION(AObjectiveItem, OccupyingPlayer, COND_OwnerOnly);
 	DOREPLIFETIME_CONDITION(AObjectiveItem, IsOccupied, COND_OwnerOnly);
-	DOREPLIFETIME_CONDITION(AObjectiveItem, OccupiedTime, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AObjectiveItem, RemainingTime, COND_OwnerOnly);
+	DOREPLIFETIME_CONDITION(AObjectiveItem, DisplayText, COND_OwnerOnly);
+
 }
 
 void AObjectiveItem::OccupyItem(class AGnirutHumanPlayer* Player)
@@ -46,29 +49,27 @@ void AObjectiveItem::OccupyItem(class AGnirutHumanPlayer* Player)
 	}
 }
 
-void AObjectiveItem::UpdateOccupiedTime(float DeltaTime)
-{
-	;
-}
-
-
 void AObjectiveItem::UnOccupyItem()
 {
 	if (!IsOccupied)		return;
 	IsOccupied = false;
 	SetActorEnableCollision(true);
 }
-/*
-void AObjectiveItem::ServerDropItem_Implementation()
+
+void AObjectiveItem::UpdateRemainingTime(float DeltaTime)
 {
-	
+	if (IsOccupied)
+	{
+		RemainingTime -= DeltaTime;
+
+		if (RemainingTime <= 0.0f)
+		{
+			// GAME OVER BY HOLDING ITEM.
+			RemainingTime = 0.0f;
+		}
+	}
 }
 
-void AObjectiveItem::MulticastDropItem_Implementation()
-{
-
-}
-*/
 
 void AObjectiveItem::Tick(float DeltaTime)
 {
@@ -81,9 +82,30 @@ void AObjectiveItem::Tick(float DeltaTime)
 	}
 	else
 	{
+		if (HasAuthority())
+		{
+			UpdateRemainingTime(DeltaTime);
+		}
+
 		FVector NewLocation = OccupyingPlayer->GetActorLocation() + FVector(0, 0, HeightOffset);
 		FRotator NewRotation = OccupyingPlayer->GetActorRotation();
 
 		SetActorLocationAndRotation(NewLocation, NewRotation);
+	}
+}
+
+void AObjectiveItem::OnRep_RemainingTime()
+{
+	DisplayText = FString::Printf(TEXT("%.1f"), RemainingTime);
+}
+
+void AObjectiveItem::DrawHUD(APlayerController* PC, UCanvas* Canvas, FVector2D ViewportSize)
+{
+	if (Canvas && PC)
+	{
+		FVector2D ScreenPosition;
+
+		PC->ProjectWorldLocationToScreen(GetActorLocation(), ScreenPosition);
+		//Canvas->DrawText(FVector2D(ScreenPosition.X, ScreenPosition.Y - 20), FText::FromString(DisplayText), GEngine->GetSmallFont(), FLinearColor::Red);
 	}
 }

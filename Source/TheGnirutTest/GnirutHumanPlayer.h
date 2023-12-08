@@ -78,6 +78,8 @@ public:
 	UFUNCTION()
 	void SetHoldingItem(AObjectiveItem* Item);
 
+	void DropItem();
+
 protected:
 
 	/** Called for movement input */
@@ -134,8 +136,6 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastInteract(FVector Start, FVector End);
 	void MulticastInteract_Implementation(FVector Start, FVector End);
-
-	void DropItem();
 
 	UFUNCTION(Server, Reliable)
 	void ServerDropItem(FVector DropLocation);
