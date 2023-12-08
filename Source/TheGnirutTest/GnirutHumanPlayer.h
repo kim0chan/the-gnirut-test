@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GnirutCharacter.h"
+#include "ObjectiveItem.h"
 #include "GnirutHumanPlayer.generated.h"
 
 /**
@@ -52,6 +53,10 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public AGnirutCharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* AttackAction;
 
+	/** Interact Input Action*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
+
 	/** Tabkey Input Action*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* TabkeyAction;
@@ -65,8 +70,17 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public AGnirutCharacter
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class AGnirutSpectatorPawn> SpectatorPawnClass;
 
+
 public:
 	AGnirutHumanPlayer();
+
+	UPROPERTY(Replicated)
+	AObjectiveItem* HoldingItem;
+
+	UFUNCTION()
+	void SetHoldingItem(AObjectiveItem* Item);
+
+	void DropItem();
 
 protected:
 
@@ -115,6 +129,32 @@ protected:
 	//UPROPERTY()
 	//class UGnirutAnimInstance* AnimInstance;
 
+	void Interact();
+
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(FVector Start, FVector End);
+	void ServerInteract_Implementation(FVector Start, FVector End);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastInteract(FVector Start, FVector End);
+	void MulticastInteract_Implementation(FVector Start, FVector End);
+
+	UFUNCTION(Server, Reliable)
+	void ServerDropItem(FVector DropLocation);
+	void ServerDropItem_Implementation(FVector DropLocation);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastDropItem(FVector DropLocation);
+	void MulticastDropItem_Implementation(FVector DropLocation);
+
+	//UFUNCTION(Server, Reliable)
+	//void ServerDropItem();
+	//void ServerDropItem_Implementation();
+
+	//UFUNCTION(NetMulticast, Reliable)
+	//void MulticastDropItem();
+	//void MulticastDropItem_Implementation();
+
 	UFUNCTION()
 	void PressTab();
 
@@ -127,6 +167,8 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void Dying(class AGnirutPlayerState* Attacker) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
 	/** Returns CameraBoom subobject **/

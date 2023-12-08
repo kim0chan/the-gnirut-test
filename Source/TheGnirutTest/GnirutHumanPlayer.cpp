@@ -2,6 +2,7 @@
 
 
 #include "GnirutHumanPlayer.h"
+#include "Net/UnrealNetwork.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -20,6 +21,8 @@
 
 AGnirutHumanPlayer::AGnirutHumanPlayer()
 {
+	HoldingItem = nullptr;
+
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -84,6 +87,9 @@ void AGnirutHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 		// Attacking
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &AGnirutHumanPlayer::Attack);
 
+		// Interacting
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &AGnirutHumanPlayer::Interact);
+
 		// Tab Menu toggle
 		EnhancedInputComponent->BindAction(TabkeyAction, ETriggerEvent::Started, this, &AGnirutHumanPlayer::PressTab);
 
@@ -92,6 +98,13 @@ void AGnirutHumanPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AGnirutHumanPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME_CONDITION(AGnirutHumanPlayer, HoldingItem, COND_OwnerOnly);
 }
 
 void AGnirutHumanPlayer::PressTab()
@@ -272,6 +285,11 @@ void AGnirutHumanPlayer::Dying(AGnirutPlayerState* Attacker)
 	FVector ActorLocation = GetActorLocation();
 	FRotator ActorRotation = GetActorRotation();
 
+	if (HoldingItem)
+	{
+		DropItem();
+	}
+
 	Super::Dying(Attacker);
 
 	if (CharacterController && SpectatorPawnClass)
@@ -283,4 +301,59 @@ void AGnirutHumanPlayer::Dying(AGnirutPlayerState* Attacker)
 			CharacterController->HandleGameDefeat(Attacker);
 		}
 	}
+}
+
+void AGnirutHumanPlayer::Interact()
+{
+	FVector Start = FollowCamera->GetComponentLocation() + FVector(0, 0, 50.0f);
+	FVector End = Start + FollowCamera->GetForwardVector() * 500.0f;
+
+	ServerInteract(Start, End);
+}
+
+void AGnirutHumanPlayer::ServerInteract_Implementation(FVector Start, FVector End)
+{
+	MulticastInteract(Start, End);
+}
+
+void AGnirutHumanPlayer::MulticastInteract_Implementation(FVector Start, FVector End)
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
+	{
+		if (AObjectiveItem* Item = Cast<AObjectiveItem>(HitResult.GetActor()))
+		{
+			Item->OccupyItem(this);
+		}
+	}
+}
+
+void AGnirutHumanPlayer::DropItem()
+{
+	//if (!HoldingItem)	return;
+	FVector DropLocation = GetActorLocation() - FVector(0, 0, HoldingItem->HeightOffset);
+	ServerDropItem(DropLocation);
+}
+
+void AGnirutHumanPlayer::ServerDropItem_Implementation(FVector DropLocation)
+{
+	MulticastDropItem(DropLocation);
+}
+
+void AGnirutHumanPlayer::MulticastDropItem_Implementation(FVector DropLocation)
+{
+	if (HoldingItem)
+	{
+		HoldingItem->SetActorLocation(DropLocation);
+		HoldingItem->UnOccupyItem();
+		HoldingItem = nullptr;
+	}
+}
+
+void AGnirutHumanPlayer::SetHoldingItem(AObjectiveItem* Item)
+{
+	HoldingItem = Item;
 }

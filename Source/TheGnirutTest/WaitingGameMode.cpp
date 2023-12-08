@@ -63,6 +63,7 @@ void AWaitingGameMode::TravelToMainGame()
 	if (world)
 	{
 		bUseSeamlessTravel = true;
-		world->ServerTravel("/Game/Gnirut/BasicMap?listen");
+		//world->ServerTravel("/Game/Gnirut/BasicMap?listen");
+		world->ServerTravel("/Game/Gnirut/TestMap?listen");
 	}
 }
