@@ -48,7 +48,7 @@ void AGnirutCharacter::PostInitializeComponents()
 	AnimInstance = Cast<UGnirutAnimInstance>(GetMesh()->GetAnimInstance());
 }
 
-void AGnirutCharacter::Dying()
+void AGnirutCharacter::Dying(AGnirutPlayerState* Attacker)
 {
 	AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(GetPlayerState());
 	if (GPS)

@@ -255,7 +255,7 @@ void AGnirutHumanPlayer::AttackCheck()
 					AttackerGnirutPlayerState->AddAIPlayerKills();
 				}
 				GnirutGameState->SetKillLogInfo(this, HumanPlayer);
-				TargetCharacter->Dying();
+				TargetCharacter->Dying(AttackerGnirutPlayerState);
 			}
 		}
 	}
@@ -266,12 +266,13 @@ void AGnirutHumanPlayer::OnAttackMontageEnded(UAnimMontage* Montage, bool bInter
 	IsAttacking = false;
 }
 
-void AGnirutHumanPlayer::Dying()
+void AGnirutHumanPlayer::Dying(AGnirutPlayerState* Attacker)
 {
-	AController* CharacterController = GetController();
+	AGnirutPlayerController* CharacterController = Cast<AGnirutPlayerController>(GetController());
 	FVector ActorLocation = GetActorLocation();
 	FRotator ActorRotation = GetActorRotation();
-	Super::Dying();
+
+	Super::Dying(Attacker);
 
 	if (CharacterController && SpectatorPawnClass)
 	{
@@ -279,6 +280,7 @@ void AGnirutHumanPlayer::Dying()
 		if (SpectatorPawn)
 		{
 			CharacterController->Possess(SpectatorPawn);
+			CharacterController->HandleGameDefeat(Attacker);
 		}
 	}
 }

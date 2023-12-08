@@ -28,8 +28,11 @@ void AWaitingPlayerController::CreatePlayerHUD() {
 	{
 		PlayerHUD = CreateWidget<UWaitingPlayerHUD>(this, PlayerHUDClass);
 		if (PlayerHUD) {
+			SetShowMouseCursor(true);
+			FInputModeUIOnly InputMode;
+			SetInputMode(InputMode);
+
 			PlayerHUD->AddToPlayerScreen();
-			UE_LOG(LogTemp, Display, TEXT("AddToPlayerScreen"));
 		}
 
 		UWorld* world = GetWorld();
@@ -53,6 +56,9 @@ void AWaitingPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (PlayerHUD)
 	{
+		SetShowMouseCursor(false);
+		SetInputMode(FInputModeGameOnly());
+
 		PlayerHUD->RemoveFromParent();
 		PlayerHUD = nullptr;
 	}

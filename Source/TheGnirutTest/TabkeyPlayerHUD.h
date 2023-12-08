@@ -17,6 +17,8 @@ class THEGNIRUTTEST_API UTabkeyPlayerHUD : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
+	virtual void NativeDestruct() override;
+
 	void ToggleVisibility();
 
 protected:

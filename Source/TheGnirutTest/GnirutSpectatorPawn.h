@@ -33,7 +33,7 @@ class THEGNIRUTTEST_API AGnirutSpectatorPawn : public ASpectatorPawn
 
 	/** Tabkey Input Action*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* TabkeyAction;
+	UInputAction* TabkeyAction;
 
 protected:
 	/** Called for movement input */

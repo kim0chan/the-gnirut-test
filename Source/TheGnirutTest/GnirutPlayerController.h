@@ -25,6 +25,11 @@ public:
 
 	void ToggleTabMenuVisibility();
 
+	void StartSpectate();
+
+	UFUNCTION(Client, Reliable)
+	void HandleGameDefeat(class AGnirutPlayerState* Attacker);
+
 	void HandleGameEnd(class AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition);
 
 	void ReturnToLobby();
@@ -35,6 +40,12 @@ protected:
 
 	UPROPERTY()
 	UKillLogHUD* PlayerHUD;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UGameDefeatHUD> GameDefeatHUDClass;
+
+	UPROPERTY()
+	UGameDefeatHUD* GameDefeatHUD;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UGameEndHUD> GameEndHUDClass;
