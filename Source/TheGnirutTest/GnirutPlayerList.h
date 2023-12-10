@@ -18,7 +18,16 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UScrollBox* PlayerScrollBox;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* NumberOfHumanPlayersTextBlock;
+
+	void UpdateNumberOfHumanPlayers(int nums);
+
 	void UpdatePlayerList();
+
+	void UpdatePlayerAlive(int32 PlayerID, bool isAlive);
+
+	void UpdateKills(int32 PlayerID, int32 HumanPlayerKills, int32 AIPlayerKills);
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UGnirutPlayerListItem> PlayerListItemClass;

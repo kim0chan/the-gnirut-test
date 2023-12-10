@@ -67,6 +67,8 @@ class THEGNIRUTTEST_API AGnirutHumanPlayer : public AGnirutCharacter
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	float AttackRadius;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AGnirutSpectatorPawn> SpectatorPawnClass;
 
 
 public:
@@ -164,7 +166,7 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void Dying() override;
+	virtual void Dying(class AGnirutPlayerState* Attacker) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

@@ -17,6 +17,7 @@
 #include "GnirutHumanPlayer.h"
 #include "GnirutGameState.h"
 #include "GnirutPlayerController.h"
+#include "GnirutSpectatorPawn.h"
 
 AGnirutHumanPlayer::AGnirutHumanPlayer()
 {
@@ -148,7 +149,7 @@ void AGnirutHumanPlayer::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
-	}
+	}	
 }
 
 void AGnirutHumanPlayer::Run(const FInputActionValue& Value)
@@ -267,7 +268,7 @@ void AGnirutHumanPlayer::AttackCheck()
 					AttackerGnirutPlayerState->AddAIPlayerKills();
 				}
 				GnirutGameState->SetKillLogInfo(this, HumanPlayer);
-				TargetCharacter->Dying();
+				TargetCharacter->Dying(AttackerGnirutPlayerState);
 			}
 		}
 	}
@@ -278,9 +279,9 @@ void AGnirutHumanPlayer::OnAttackMontageEnded(UAnimMontage* Montage, bool bInter
 	IsAttacking = false;
 }
 
-void AGnirutHumanPlayer::Dying()
+void AGnirutHumanPlayer::Dying(AGnirutPlayerState* Attacker)
 {
-	AController* CharacterController = GetController();
+	AGnirutPlayerController* CharacterController = Cast<AGnirutPlayerController>(GetController());
 	FVector ActorLocation = GetActorLocation();
 	FRotator ActorRotation = GetActorRotation();
 
@@ -289,12 +290,16 @@ void AGnirutHumanPlayer::Dying()
 		DropItem();
 	}
 
-	Super::Dying();
+	Super::Dying(Attacker);
 
-	if (CharacterController)
+	if (CharacterController && SpectatorPawnClass)
 	{
-		ASpectatorPawn* SpectatorPawn = GetWorld()->SpawnActor<ASpectatorPawn>(ASpectatorPawn::StaticClass(), ActorLocation, ActorRotation);
-		CharacterController->Possess(SpectatorPawn);
+		AGnirutSpectatorPawn* SpectatorPawn = GetWorld()->SpawnActor<AGnirutSpectatorPawn>(SpectatorPawnClass, ActorLocation, ActorRotation);
+		if (SpectatorPawn)
+		{
+			CharacterController->Possess(SpectatorPawn);
+			CharacterController->HandleGameDefeat(Attacker);
+		}
 	}
 }
 

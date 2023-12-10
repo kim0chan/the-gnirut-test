@@ -16,7 +16,7 @@ void UWaitingPlayerList::UpdatePlayerList()
 		if (WGS)
 		{
 			PlayerScrollBox->ClearChildren();
-			for (APlayerState* PS : WGS->AllPlayerStates)
+			for (APlayerState* PS : WGS->PlayerArray)
 			{
 				AWaitingPlayerState* WPS = Cast<AWaitingPlayerState>(PS);
 				if (WPS)
@@ -24,8 +24,11 @@ void UWaitingPlayerList::UpdatePlayerList()
 					UWaitingPlayerListItem* PLI = CreateWidget<UWaitingPlayerListItem>(this, PlayerListItemClass);
 					if (PLI)
 					{
-						PLI->setPlayerNameTextBlock(FText::FromString(WPS->GetPlayerName()));
-						PLI->setIsReadyTextBlock(WPS->isReady());
+						if (WPS->GetPlayerController()) {
+							PLI->SetIsLocalPlayer(WPS->GetPlayerController()->IsLocalController());
+						}
+						PLI->SetPlayerNameTextBlock(FText::FromString(WPS->GetPlayerName()));
+						PLI->SetIsReadyTextBlock(WPS->isReady());
 						PlayerScrollBox->AddChild(PLI);
 						PlayerListItemByPlayerID.Add( WPS->GetPlayerId() , PLI );
 					}
@@ -40,6 +43,6 @@ void UWaitingPlayerList::UpdatePlayerReady(int32 PlayerID, bool isReady)
 	UWaitingPlayerListItem** PLI = PlayerListItemByPlayerID.Find(PlayerID);
 	if (PLI)
 	{
-		(*PLI)->setIsReadyTextBlock(isReady);
+		(*PLI)->SetIsReadyTextBlock(isReady);
 	}
 }

@@ -48,21 +48,29 @@ void AGnirutCharacter::PostInitializeComponents()
 	AnimInstance = Cast<UGnirutAnimInstance>(GetMesh()->GetAnimInstance());
 }
 
-void AGnirutCharacter::Dying()
+void AGnirutCharacter::Dying(AGnirutPlayerState* Attacker)
 {
+	AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(GetPlayerState());
+	if (GPS)
+	{
+		GPS->SetDead();
+	}
+
+	ServerDying();
+
 	AController* CharacterController = GetController();
 	if (CharacterController)
 	{
 		CharacterController->UnPossess();
 	}
-	// TODO: need to fix Bug. 
-	// If enable the following line, the Character fall through the floor...
-	//SetActorEnableCollision(false);
-	ServerDying();
 }
 
 void AGnirutCharacter::ServerDying_Implementation()
 {
+	AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(this);
+	AGnirutGameState* GnirutGameState = GetWorld()->GetGameState<AGnirutGameState>();
+	if (!GnirutGameState)	return;
+	GnirutGameState->DecrementPlayerCounts_Implementation(!HumanPlayer);
 	MulticastDying();
 }
 
@@ -70,9 +78,4 @@ void AGnirutCharacter::MulticastDying_Implementation()
 {
 	AnimInstance->SetDead();
 	GetCapsuleComponent()->DestroyComponent();
-	if (!HasAuthority())	return;
-	AGnirutHumanPlayer* HumanPlayer = Cast<AGnirutHumanPlayer>(this);
-	AGnirutGameState* GnirutGameState = GetWorld()->GetGameState<AGnirutGameState>();
-	if (!GnirutGameState)	return;
-	GnirutGameState->DecrementPlayerCounts_Implementation(!HumanPlayer);
 }

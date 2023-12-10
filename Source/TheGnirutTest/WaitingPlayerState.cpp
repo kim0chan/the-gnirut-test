@@ -37,7 +37,7 @@ void AWaitingPlayerState::ClientSetPlayerNameFromGameInstance_Implementation()
 {
 	if (UGnirutGameInstance* GGI = GetGameInstance<UGnirutGameInstance>()) {
 		FString name = GGI->GetPlayerName();
-		UE_LOG(LogTemp, Display, TEXT("%s"), *name);
+		//UE_LOG(LogTemp, Display, TEXT("%s"), *name);
 		if (!name.IsEmpty()) {
 			SetPlayerName(name);
 		}

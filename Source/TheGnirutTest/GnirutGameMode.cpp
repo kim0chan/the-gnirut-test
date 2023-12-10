@@ -59,19 +59,19 @@ void AGnirutGameMode::PostLogin(APlayerController* NewPlayer)
 	if (GnirutPlayerState)
 	{
 		GnirutPlayerState->SetPlayerIndex(GnirutGameState->GetNumberOfHumanPlayers());
-		FString NewNickName = FString::Printf(TEXT("Player %d"), GnirutPlayerState->GetPlayerIndex());
-		GnirutPlayerState->SetPlayerNickName(NewNickName);
+		GnirutPlayerState->InitPlayerName();
 	}
-
-	//if (NewPlayer->GetNetConnection()) {
-	//	UE_LOG(LogTemp, Display, TEXT("** %d"), NewPlayer->GetNetConnection()->GetConnectionId());
-	//}
-
 	UpdatePlayerList();
 }
 
 void AGnirutGameMode::Logout(AController* Exiting)
 {
+	AGnirutPlayerState* GPS = Exiting->GetPlayerState<AGnirutPlayerState>();
+	if (GPS && GPS->GetIsAlive())
+	{
+		AGnirutGameState* GnirutGameState = GetGameState<AGnirutGameState>();
+		GnirutGameState->DecrementPlayerCounts_Implementation(false);
+	}
 
 	AGnirutPlayerController* GPC = Cast<AGnirutPlayerController>(Exiting);
 	if (GPC)
@@ -87,6 +87,16 @@ void AGnirutGameMode::Logout(AController* Exiting)
 	}
 
 	Super::Logout(Exiting);
+}
+
+void AGnirutGameMode::TravleToWaiting()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		bUseSeamlessTravel = true;
+		world->ServerTravel("/Game/Waiting/WaitingMap?listen");
+	}
 }
 
 

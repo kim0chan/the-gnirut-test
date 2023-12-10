@@ -78,6 +78,7 @@ Saved/
 DerivedDataCache/
 Intermediate/
 Binary/
+Content/StarterContent/
 *.sln
 *.suo
 *.opensdf

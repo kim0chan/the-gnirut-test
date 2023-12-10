@@ -6,16 +6,43 @@
 #include "Net/UnrealNetwork.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "GnirutPlayerList.h"
+#include "GnirutPlayerController.h"
+#include "GnirutPlayerState.h"
+#include "GnirutHumanPlayer.h"
 
 AGnirutGameState::AGnirutGameState()
-{
+{ 
 	NumberOfAIPlayers = 0;
 	NumberOfHumanPlayers = 0;
 }
 
+void AGnirutGameState::OnRep_NumberOfHumanPlayers()
+{
+	UpdateNumberOfHumanPlayers();
+}
+
+void AGnirutGameState::UpdateNumberOfHumanPlayers()
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		TArray<UUserWidget*> FoundWidgets;
+		UWidgetBlueprintLibrary::GetAllWidgetsOfClass(world, FoundWidgets, UGnirutPlayerList::StaticClass(), false);
+
+		for (UUserWidget* UW : FoundWidgets)
+		{
+			UGnirutPlayerList* GPL = Cast<UGnirutPlayerList>(UW);
+			if (GPL)
+			{
+				GPL->UpdateNumberOfHumanPlayers(NumberOfHumanPlayers);
+			}
+		}
+	}
+}
+
 void AGnirutGameState::SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnirutHumanPlayer* Victim)
 {
-	FString AttackerNickname = (Attacker) ? Attacker->GetPlayerState<AGnirutPlayerState>()->GetPlayerNickName() : "A player";
+	FString AttackerNickname = (Attacker) ? Attacker->GetPlayerState<AGnirutPlayerState>()->GetPlayerName() : "A player";
 	FString VictimNickname = "an AI";
 
 	if (Victim)
@@ -27,7 +54,7 @@ void AGnirutGameState::SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnirutHuman
 			if (!PossessingPawn)	continue;	// Possessing Pawn Is Dead.
 			if (Victim->GetUniqueID() == PossessingPawn->GetUniqueID())
 			{
-				VictimNickname = GPS->GetPlayerNickName();
+				VictimNickname = GPS->GetPlayerName();
 			}
 		}
 	}
@@ -66,6 +93,7 @@ void AGnirutGameState::DecrementPlayerCounts_Implementation(bool isAIPlayer)
 	else
 	{
 		NumberOfHumanPlayers--;
+		UpdateNumberOfHumanPlayers();
 		//UE_LOG(LogTemp, Display, TEXT("[kill log] a Human Player got killed! [%d]"), NumberOfHumanPlayers);
 	}
 
@@ -74,10 +102,37 @@ void AGnirutGameState::DecrementPlayerCounts_Implementation(bool isAIPlayer)
 
 void AGnirutGameState::CheckGameEnd_Implementation()
 {
-	UE_LOG(LogTemp, Display, TEXT("[GameState>CheckGameEnd] AI: %d, Human: %d"), NumberOfAIPlayers, NumberOfHumanPlayers);
+	AGnirutPlayerState* Winner = nullptr;
+	EVictoryCondition Condition = EVictoryCondition::VC_None;
+
 	if (NumberOfHumanPlayers <= 1)
 	{
-		UE_LOG(LogTemp, Display, TEXT("GAME ENDED."));
+		Condition = EVictoryCondition::VC_LastManStanding;
+		for (APlayerState* PS : PlayerArray)
+		{
+			AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(PS);
+			if (GPS && GPS->GetIsAlive())
+			{	
+				Winner = GPS;
+				break;
+			}
+		}
+	}
+
+	if (Winner && Condition != EVictoryCondition::VC_None) 
+		HandleGameEnd(Winner, Condition);
+}
+
+void AGnirutGameState::HandleGameEnd_Implementation(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition)
+{
+	UWorld* world = GetWorld();
+	if (world)
+	{
+		AGnirutPlayerController* GPC = Cast<AGnirutPlayerController>(world->GetFirstPlayerController());
+		if (GPC && GPC->IsLocalPlayerController())
+		{
+			GPC->HandleGameEnd(WinningPlayer, VictoryCondition);
+		}
 	}
 }
 
@@ -85,12 +140,14 @@ void AGnirutGameState::InitPlayerCounts_Implementation(int32 numAI, int32 numHum
 {
 	NumberOfAIPlayers = numAI;
 	NumberOfHumanPlayers = numHuman;
+	UpdateNumberOfHumanPlayers();
 	//UE_LOG(LogTemp, Display, TEXT("[Initialization] AI : %d, Human : %d"), NumberOfAIPlayers, NumberOfHumanPlayers);
 }
 
 void AGnirutGameState::PlayerLogin_Implementation()
 {
 	NumberOfHumanPlayers++;
+	UpdateNumberOfHumanPlayers();
 	//UE_LOG(LogTemp, Display, TEXT("[Login] A player has entered the game. There are %d"), NumberOfHumanPlayers);
 }
 

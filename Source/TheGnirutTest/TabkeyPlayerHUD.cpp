@@ -15,6 +15,14 @@ void UTabkeyPlayerHUD::NativeConstruct()
 	}
 }
 
+void UTabkeyPlayerHUD::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	// Remove all bindings from the OnClicked event of the LeaveButton
+	LeaveButton->OnClicked.RemoveAll(this);
+}
+
 void UTabkeyPlayerHUD::ToggleVisibility()
 {
 	if (GetVisibility() == ESlateVisibility::Hidden)

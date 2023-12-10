@@ -2,16 +2,18 @@
 
 #pragma once
 
-#include "GnirutHumanPlayer.h"
-#include "GnirutPlayerState.h"
-#include "GnirutPlayerController.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "GnirutGameState.generated.h"
 
-/**
- *
- */
+UENUM(BlueprintType)
+enum class EVictoryCondition : uint8
+{
+	VC_None UMETA(DisplayName = "None"),
+	VC_LastManStanding UMETA(DisplayName = "Last Man Standing"),
+	VC_GetItem UMETA(DisplayName = "Get Item"),
+};
+
 UCLASS()
 class THEGNIRUTTEST_API AGnirutGameState : public AGameStateBase
 {
@@ -23,11 +25,14 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State")
 	int32 NumberOfAIPlayers;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Game State")
+	UFUNCTION()
+	void OnRep_NumberOfHumanPlayers();
+	void UpdateNumberOfHumanPlayers();
+	UPROPERTY(ReplicatedUsing = OnRep_NumberOfHumanPlayers, BlueprintReadOnly, Category = "Game State")
 	int32 NumberOfHumanPlayers;
 
 	UFUNCTION(Category = "Game State")
-	void SetKillLogInfo(AGnirutHumanPlayer* Attacker, AGnirutHumanPlayer* Victim);
+	void SetKillLogInfo(class AGnirutHumanPlayer* Attacker, AGnirutHumanPlayer* Victim);
 
 	UFUNCTION(Category = "Game State")
 	void UpdateKillLogInfo(const FString& KillLogMessage);
@@ -39,6 +44,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void CheckGameEnd();
 	void CheckGameEnd_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void HandleGameEnd(class AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition);
+	void HandleGameEnd_Implementation(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition);
 
 	UFUNCTION(Server, Reliable)
 	void InitPlayerCounts(int32 numAI, int32 numHuman);

@@ -14,11 +14,13 @@ class THEGNIRUTTEST_API UWaitingPlayerListItem : public UUserWidget
 {
 	GENERATED_BODY()
 
+	bool bIsLocalPlayer = false;
 public:
-	void setPlayerNameTextBlock(FText playerName);
+	void SetPlayerNameTextBlock(FText playerName);
 
-	void setIsReadyTextBlock(bool isReady);
-
+	void SetIsReadyTextBlock(bool isReady);
+	
+	void SetIsLocalPlayer(bool isLocalPlayer);
 protected:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* PlayerNameTextBlock;

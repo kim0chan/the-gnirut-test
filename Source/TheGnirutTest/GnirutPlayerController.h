@@ -6,6 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "GnirutPlayerController.generated.h"
 
+enum class EVictoryCondition : uint8;
+
 /**
  *
  */
@@ -23,6 +25,13 @@ public:
 
 	void ToggleTabMenuVisibility();
 
+	void StartSpectate();
+
+	UFUNCTION(Client, Reliable)
+	void HandleGameDefeat(class AGnirutPlayerState* Attacker);
+
+	void HandleGameEnd(class AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition);
+
 	void ReturnToLobby();
 
 protected:
@@ -31,4 +40,16 @@ protected:
 
 	UPROPERTY()
 	UKillLogHUD* PlayerHUD;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UGameDefeatHUD> GameDefeatHUDClass;
+
+	UPROPERTY()
+	UGameDefeatHUD* GameDefeatHUD;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UGameEndHUD> GameEndHUDClass;
+
+	UPROPERTY()
+	UGameEndHUD* GameEndHUD;
 };

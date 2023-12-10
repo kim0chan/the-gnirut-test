@@ -4,14 +4,25 @@
 #include "GnirutPlayerController.h"
 #include "KillLogHUD.h"
 #include "TabkeyPlayerHUD.h"
-#include "Blueprint/UserWidget.h"
+#include "GameDefeatHUD.h"
+#include "GameEndHUD.h"
+#include "GnirutPlayerList.h"
 #include "GnirutGameMode.h"
+#include "GnirutGameState.h"
+#include "GnirutPlayerState.h"
+#include "GnirutSpectatorPawn.h"
+#include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "EnhancedInputSubsystems.h"
 
 AGnirutPlayerController::AGnirutPlayerController()
 {
 	PlayerHUDClass = nullptr;
+	GameEndHUDClass = nullptr;
+	GameDefeatHUDClass = nullptr;
 	PlayerHUD = nullptr;
+	GameEndHUD = nullptr;
+	GameDefeatHUD = nullptr;
 }
 
 void AGnirutPlayerController::BeginPlay()
@@ -35,6 +46,11 @@ void AGnirutPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		PlayerHUD->RemoveFromParent();
 		PlayerHUD = nullptr;
 	}
+	if (GameDefeatHUD)
+	{
+		GameDefeatHUD->RemoveFromParent();
+		GameDefeatHUD = nullptr;
+	}
 
 	Super::EndPlay(EndPlayReason);
 }
@@ -56,6 +72,84 @@ void AGnirutPlayerController::ToggleTabMenuVisibility()
 				SetShowMouseCursor(!ShouldShowMouseCursor());
 			}
 		}
+	}
+}
+
+void AGnirutPlayerController::HandleGameDefeat_Implementation(AGnirutPlayerState* Attacker)
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->RemoveFromViewport();
+	}
+	if (GameEndHUD == nullptr && GameDefeatHUDClass)
+	{
+		GameDefeatHUD = CreateWidget<UGameDefeatHUD>(this, GameDefeatHUDClass);
+		if (GameDefeatHUD) 
+		{
+			SetShowMouseCursor(true);
+
+
+			GameDefeatHUD->AddToViewport();
+			GameDefeatHUD->SetDefeatedTextBlock(Attacker->GetPlayerName());
+		}
+	}
+
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->ClearAllMappings();
+	}
+}
+
+void AGnirutPlayerController::StartSpectate()
+{
+	if (GameDefeatHUD)
+	{
+		GameDefeatHUD->RemoveFromViewport();
+		GameDefeatHUD->RemoveFromParent();
+		GameDefeatHUD = nullptr;
+	}
+	if (PlayerHUD)
+	{
+		SetShowMouseCursor(false);
+		PlayerHUD->AddToViewport();
+	}
+
+	AGnirutSpectatorPawn* GSP = Cast<AGnirutSpectatorPawn>(GetPawn());
+	if (GSP)
+	{
+		GSP->SetDefaultMappingContext();
+	}
+}
+
+void AGnirutPlayerController::HandleGameEnd(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition)
+{
+	if (PlayerHUD)
+	{
+		PlayerHUD->RemoveFromParent();
+		PlayerHUD = nullptr;
+	}
+	if (GameDefeatHUD)
+	{
+		GameDefeatHUD->RemoveFromViewport();
+		GameDefeatHUD->RemoveFromParent();
+		GameDefeatHUD = nullptr;
+	}
+
+	if (IsLocalController() && GameEndHUDClass && GetPawn()) {
+		SetShowMouseCursor(true);
+
+		GameEndHUD = CreateWidget<UGameEndHUD>(this, GameEndHUDClass);
+		if (GameEndHUD) {
+			GameEndHUD->SetWinnerTextBlock(WinningPlayer->GetPlayerName());
+			GameEndHUD->SetVictoryConditionTextBlock(VictoryCondition);
+			if (!HasAuthority()) GameEndHUD->SetBackToWaitingButtonVisibility(ESlateVisibility::Collapsed);
+			GameEndHUD->AddToViewport();
+		}
+	}
+
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	{
+		Subsystem->ClearAllMappings();
 	}
 }
 

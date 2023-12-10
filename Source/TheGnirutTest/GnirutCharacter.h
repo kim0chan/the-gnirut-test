@@ -24,7 +24,7 @@ public:
 	AGnirutCharacter();
 	
 	UFUNCTION()
-	virtual void Dying();
+	virtual void Dying(class AGnirutPlayerState* Attacker);
 
 	UFUNCTION(Server, Reliable)
 	virtual void ServerDying();
