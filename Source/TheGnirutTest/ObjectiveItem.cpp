@@ -1,10 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Net/UnrealNetwork.h"
 #include "ObjectiveItem.h"
+#include "Net/UnrealNetwork.h"
 #include "GnirutHumanPlayer.h"
+#include "ItemHUD.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/WidgetComponent.h"
 
 AObjectiveItem::AObjectiveItem()
 {
@@ -12,11 +14,17 @@ AObjectiveItem::AObjectiveItem()
 
 	BoxMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoxMesh"));
 	RootComponent = BoxMesh;
+
+	ItemWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("ItemWidget"));
+	ItemWidget->SetupAttachment(BoxMesh);
+	//ItemWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 70.0f));
+	ItemWidget->SetWidgetSpace(EWidgetSpace::Screen);
+
 	OccupyingPlayer = nullptr;
 	IsOccupied = false;
 	HeightOffset = 50.0f;
 	bReplicates = true;
-	RemainingTime = 25.0f;
+	RemainingTime = 40.0f;
 	DisplayText = FString("0");
 }
 
@@ -58,9 +66,12 @@ void AObjectiveItem::UnOccupyItem()
 
 void AObjectiveItem::UpdateRemainingTime(float DeltaTime)
 {
+	if (!HasAuthority())	return;
 	if (IsOccupied)
 	{
 		RemainingTime -= DeltaTime;
+
+		ServerUpdateRemainingTime(RemainingTime);
 
 		if (RemainingTime <= 0.0f)
 		{
@@ -70,6 +81,19 @@ void AObjectiveItem::UpdateRemainingTime(float DeltaTime)
 	}
 }
 
+void AObjectiveItem::ServerUpdateRemainingTime_Implementation(float Time)
+{
+	MulticastUpdateRemainingTime(Time);
+}
+
+void AObjectiveItem::MulticastUpdateRemainingTime_Implementation(float Time)
+{
+	UItemHUD* IW = Cast<UItemHUD>(ItemWidget->GetUserWidgetObject());
+	if (IW)
+	{
+		IW->UpdateTextBlock(FString::Printf(TEXT("%.1fs"), Time));
+	}
+}
 
 void AObjectiveItem::Tick(float DeltaTime)
 {
@@ -82,30 +106,11 @@ void AObjectiveItem::Tick(float DeltaTime)
 	}
 	else
 	{
-		if (HasAuthority())
-		{
-			UpdateRemainingTime(DeltaTime);
-		}
+		UpdateRemainingTime(DeltaTime);
 
 		FVector NewLocation = OccupyingPlayer->GetActorLocation() + FVector(0, 0, HeightOffset);
 		FRotator NewRotation = OccupyingPlayer->GetActorRotation();
 
 		SetActorLocationAndRotation(NewLocation, NewRotation);
-	}
-}
-
-void AObjectiveItem::OnRep_RemainingTime()
-{
-	DisplayText = FString::Printf(TEXT("%.1f"), RemainingTime);
-}
-
-void AObjectiveItem::DrawHUD(APlayerController* PC, UCanvas* Canvas, FVector2D ViewportSize)
-{
-	if (Canvas && PC)
-	{
-		FVector2D ScreenPosition;
-
-		PC->ProjectWorldLocationToScreen(GetActorLocation(), ScreenPosition);
-		//Canvas->DrawText(FVector2D(ScreenPosition.X, ScreenPosition.Y - 20), FText::FromString(DisplayText), GEngine->GetSmallFont(), FLinearColor::Red);
 	}
 }

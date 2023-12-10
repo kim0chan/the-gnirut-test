@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ItemHUD.h"
 #include "ObjectiveItem.generated.h"
+
+class UItemHUD;
 
 UCLASS()
 class THEGNIRUTTEST_API AObjectiveItem : public AActor
@@ -16,17 +19,17 @@ public:
 
 	float HeightOffset;
 
+	UPROPERTY(EditAnywhere)
+	class UWidgetComponent* ItemWidget;
+
 	UPROPERTY(Replicated)
 	bool IsOccupied;
 
-	UPROPERTY(ReplicatedUsing = OnRep_RemainingTime)
+	UPROPERTY(Replicated)
 	float RemainingTime;
 
 	UPROPERTY(Replicated)
 	FString DisplayText;
-
-	UFUNCTION()
-	void OnRep_RemainingTime();
 
 	UPROPERTY(Replicated)
 	class AGnirutHumanPlayer* OccupyingPlayer;
@@ -43,7 +46,13 @@ public:
 	UFUNCTION()
 	void UpdateRemainingTime(float DeltaTime);
 
-	virtual void DrawHUD(class APlayerController* PC, class UCanvas* Canvas, FVector2D ViewportSize);
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateRemainingTime(float Time);
+	void ServerUpdateRemainingTime_Implementation(float Time);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastUpdateRemainingTime(float Time);
+	void MulticastUpdateRemainingTime_Implementation(float Time);
 
 protected:
 	virtual void BeginPlay() override;
