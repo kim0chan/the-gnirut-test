@@ -69,7 +69,7 @@ void UGameEndHUD::SetVictoryConditionTextBlock(EVictoryCondition Condition)
 			VCString.Append("The Last Man Standing");
 			break;
 		case EVictoryCondition::VC_GetItem:
-			VCString.Append("VC_GetItem"); // 추후 수정
+			VCString.Append("Item Owner");
 			break;
 		default:
 			break;

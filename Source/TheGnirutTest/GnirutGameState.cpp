@@ -123,6 +123,26 @@ void AGnirutGameState::CheckGameEnd_Implementation()
 		HandleGameEnd(Winner, Condition);
 }
 
+void AGnirutGameState::CheckGameEndByItem_Implementation()
+{
+	AGnirutPlayerState* Winner = nullptr;
+	EVictoryCondition Condition = EVictoryCondition::VC_None;
+
+	Condition = EVictoryCondition::VC_GetItem;
+	for (APlayerState* PS : PlayerArray)
+	{
+		AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(PS);
+		if (GPS && GPS->GetIsHoldingItem())
+		{
+			Winner = GPS;
+			break;
+		}
+	}
+
+	if (Winner && Condition != EVictoryCondition::VC_None)
+		HandleGameEnd(Winner, Condition);
+}
+
 void AGnirutGameState::HandleGameEnd_Implementation(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition)
 {
 	UWorld* world = GetWorld();

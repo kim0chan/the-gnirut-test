@@ -45,6 +45,10 @@ public:
 	void CheckGameEnd();
 	void CheckGameEnd_Implementation();
 
+	UFUNCTION(Server, Reliable)
+	void CheckGameEndByItem();
+	void CheckGameEndByItem_Implementation();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void HandleGameEnd(class AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition);
 	void HandleGameEnd_Implementation(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition);

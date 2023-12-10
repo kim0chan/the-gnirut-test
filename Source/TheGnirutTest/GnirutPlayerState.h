@@ -21,6 +21,7 @@ public:
 	int32 GetTotalPlayerKills() const;
 	int32 GetPlayerIndex() const;
 	bool GetIsAlive() const;
+	bool GetIsHoldingItem() const;
 
 	void AddAIPlayerKills();
 	void AddHumanPlayerKills();
@@ -35,6 +36,11 @@ public:
 	void OnRep_SetDead();
 	void UpdatePlayerAlive();
 
+	void SetHoldingItem(bool IsHoldingItem);
+	UFUNCTION(Server, Reliable)
+	void ServerSetHoldingItem(bool IsHoldingItem);
+	void ServerSetHoldingItem_Implementation(bool IsHoldingItem);
+
 	UFUNCTION()
 	void OnRep_Kills();
 	void UpdateKills();
@@ -44,6 +50,9 @@ public:
 protected:
 	UPROPERTY(ReplicatedUsing = OnRep_SetDead, BlueprintReadOnly, Category = "PlayerState")
 	bool bIsAlive;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "PlayerState")
+	bool bIsHoldingItem;
 
 	UPROPERTY(ReplicatedUsing = OnRep_Kills, BlueprintReadOnly, Category = "PlayerState")
 	int32 AIPlayerKills;

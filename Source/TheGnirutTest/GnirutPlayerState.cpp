@@ -42,6 +42,11 @@ bool AGnirutPlayerState::GetIsAlive() const
 	return bIsAlive;
 }
 
+bool AGnirutPlayerState::GetIsHoldingItem() const
+{
+	return bIsHoldingItem;
+}
+
 void AGnirutPlayerState::AddAIPlayerKills()
 {
 	++AIPlayerKills;
@@ -120,6 +125,16 @@ void AGnirutPlayerState::ServerSetDead_Implementation()
 void AGnirutPlayerState::OnRep_SetDead()
 {
 	UpdatePlayerAlive();
+}
+
+void AGnirutPlayerState::SetHoldingItem(bool IsHoldingItem)
+{
+	ServerSetHoldingItem(IsHoldingItem);
+}
+
+void AGnirutPlayerState::ServerSetHoldingItem_Implementation(bool IsHoldingItem)
+{
+	bIsHoldingItem = IsHoldingItem;
 }
 
 void AGnirutPlayerState::UpdatePlayerAlive()

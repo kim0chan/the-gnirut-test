@@ -327,6 +327,11 @@ void AGnirutHumanPlayer::MulticastInteract_Implementation(FVector Start, FVector
 		if (AObjectiveItem* Item = Cast<AObjectiveItem>(HitResult.GetActor()))
 		{
 			Item->OccupyItem(this);
+			AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(GetPlayerState());
+			if (GPS)
+			{
+				GPS->SetHoldingItem(true);
+			}
 		}
 	}
 }
@@ -336,6 +341,11 @@ void AGnirutHumanPlayer::DropItem()
 	//if (!HoldingItem)	return;
 	FVector DropLocation = GetActorLocation() - FVector(0, 0, HoldingItem->HeightOffset);
 	ServerDropItem(DropLocation);
+	AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(GetPlayerState());
+	if (GPS)
+	{
+		GPS->SetHoldingItem(false);
+	}
 }
 
 void AGnirutHumanPlayer::ServerDropItem_Implementation(FVector DropLocation)

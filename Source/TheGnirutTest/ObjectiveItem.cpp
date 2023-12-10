@@ -7,6 +7,7 @@
 #include "ItemHUD.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/WidgetComponent.h"
+#include "GnirutGameState.h"
 
 AObjectiveItem::AObjectiveItem()
 {
@@ -66,7 +67,7 @@ void AObjectiveItem::UnOccupyItem()
 
 void AObjectiveItem::UpdateRemainingTime(float DeltaTime)
 {
-	if (!HasAuthority())	return;
+	if (!HasAuthority() || RemainingTime <= 0.0f)	return;
 	if (IsOccupied)
 	{
 		RemainingTime -= DeltaTime;
@@ -75,7 +76,12 @@ void AObjectiveItem::UpdateRemainingTime(float DeltaTime)
 
 		if (RemainingTime <= 0.0f)
 		{
-			// GAME OVER BY HOLDING ITEM.
+			AGnirutGameState* GnirutGameState = GetWorld()->GetGameState<AGnirutGameState>();
+			if (GnirutGameState)
+			{
+				GnirutGameState->CheckGameEndByItem_Implementation();
+			}
+
 			RemainingTime = 0.0f;
 		}
 	}
