@@ -23,7 +23,7 @@ AObjectiveItem::AObjectiveItem()
 
 	OccupyingPlayer = nullptr;
 	IsOccupied = false;
-	HeightOffset = 50.0f;
+	HeightOffset = 100.0f;
 	bReplicates = true;
 	RemainingTime = 40.0f;
 	DisplayText = FString("0");

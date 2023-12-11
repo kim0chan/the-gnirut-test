@@ -339,7 +339,7 @@ void AGnirutHumanPlayer::MulticastInteract_Implementation(FVector Start, FVector
 void AGnirutHumanPlayer::DropItem()
 {
 	//if (!HoldingItem)	return;
-	FVector DropLocation = GetActorLocation() - FVector(0, 0, HoldingItem->HeightOffset);
+	FVector DropLocation = GetActorLocation() - FVector(0, 0, HoldingItem->HeightOffset/2);
 	ServerDropItem(DropLocation);
 	AGnirutPlayerState* GPS = Cast<AGnirutPlayerState>(GetPlayerState());
 	if (GPS)

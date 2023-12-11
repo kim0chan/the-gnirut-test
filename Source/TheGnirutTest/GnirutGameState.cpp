@@ -14,6 +14,7 @@ AGnirutGameState::AGnirutGameState()
 { 
 	NumberOfAIPlayers = 0;
 	NumberOfHumanPlayers = 0;
+	IsGameEnded = false;
 }
 
 void AGnirutGameState::OnRep_NumberOfHumanPlayers()
@@ -145,6 +146,7 @@ void AGnirutGameState::CheckGameEndByItem_Implementation()
 
 void AGnirutGameState::HandleGameEnd_Implementation(AGnirutPlayerState* WinningPlayer, EVictoryCondition VictoryCondition)
 {
+	if (IsGameEnded)	return;
 	UWorld* world = GetWorld();
 	if (world)
 	{
@@ -154,6 +156,7 @@ void AGnirutGameState::HandleGameEnd_Implementation(AGnirutPlayerState* WinningP
 			GPC->HandleGameEnd(WinningPlayer, VictoryCondition);
 		}
 	}
+	IsGameEnded = true;
 }
 
 void AGnirutGameState::InitPlayerCounts_Implementation(int32 numAI, int32 numHuman)

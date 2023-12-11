@@ -78,4 +78,6 @@ public:
 protected:
 	// Replicated
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	bool IsGameEnded;
 };
