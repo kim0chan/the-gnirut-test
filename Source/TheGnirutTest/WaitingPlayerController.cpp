@@ -29,8 +29,6 @@ void AWaitingPlayerController::CreatePlayerHUD() {
 		PlayerHUD = CreateWidget<UWaitingPlayerHUD>(this, PlayerHUDClass);
 		if (PlayerHUD) {
 			SetShowMouseCursor(true);
-			FInputModeUIOnly InputMode;
-			SetInputMode(InputMode);
 
 			PlayerHUD->AddToPlayerScreen();
 		}
@@ -57,7 +55,6 @@ void AWaitingPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (PlayerHUD)
 	{
 		SetShowMouseCursor(false);
-		SetInputMode(FInputModeGameOnly());
 
 		PlayerHUD->RemoveFromParent();
 		PlayerHUD = nullptr;
