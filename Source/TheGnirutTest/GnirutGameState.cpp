@@ -162,8 +162,8 @@ void AGnirutGameState::HandleGameEnd_Implementation(AGnirutPlayerState* WinningP
 void AGnirutGameState::InitPlayerCounts_Implementation(int32 numAI, int32 numHuman)
 {
 	NumberOfAIPlayers = numAI;
-	NumberOfHumanPlayers = numHuman;
-	UpdateNumberOfHumanPlayers();
+	//NumberOfHumanPlayers = numHuman;
+	//UpdateNumberOfHumanPlayers();
 	//UE_LOG(LogTemp, Display, TEXT("[Initialization] AI : %d, Human : %d"), NumberOfAIPlayers, NumberOfHumanPlayers);
 }
 

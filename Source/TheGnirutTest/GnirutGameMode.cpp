@@ -48,14 +48,14 @@ void AGnirutGameMode::StartPlay()
 	GnirutGameState->InitPlayerCounts_Implementation(Actors.Num() - 1, GetCurrentPlayerCount());
 }
 
-void AGnirutGameMode::PostLogin(APlayerController* NewPlayer)
+void AGnirutGameMode::GenericPlayerInitialization(AController* C)
 {
-	Super::PostLogin(NewPlayer);
+	Super::GenericPlayerInitialization(C);
 
 	AGnirutGameState* GnirutGameState = GetGameState<AGnirutGameState>();
 	GnirutGameState->PlayerLogin_Implementation();
 
-	AGnirutPlayerState* GnirutPlayerState = Cast<AGnirutPlayerState>(NewPlayer->PlayerState);
+	AGnirutPlayerState* GnirutPlayerState = Cast<AGnirutPlayerState>(C->PlayerState);
 	if (GnirutPlayerState)
 	{
 		GnirutPlayerState->SetPlayerIndex(GnirutGameState->GetNumberOfHumanPlayers());
