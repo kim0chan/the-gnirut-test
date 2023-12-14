@@ -214,6 +214,7 @@ void AGnirutPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AGnirutPlayerState, bIsAlive);
+	DOREPLIFETIME(AGnirutPlayerState, bIsHoldingItem);
 	DOREPLIFETIME(AGnirutPlayerState, AIPlayerKills);
 	DOREPLIFETIME(AGnirutPlayerState, HumanPlayerKills);
 	DOREPLIFETIME(AGnirutPlayerState, PlayerIndex);
