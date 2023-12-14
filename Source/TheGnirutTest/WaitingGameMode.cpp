@@ -6,12 +6,12 @@
 #include "WaitingGameState.h"
 #include "WaitingPlayerState.h"
 
-void AWaitingGameMode::PostLogin(APlayerController* NewPlayer)
+void AWaitingGameMode::GenericPlayerInitialization(AController* C)
 {
-	Super::PostLogin(NewPlayer);
+	Super::GenericPlayerInitialization(C);
 
-	AWaitingPlayerController* WPC = Cast<AWaitingPlayerController>(NewPlayer);
-	if (WPC) 
+	AWaitingPlayerController* WPC = Cast<AWaitingPlayerController>(C);
+	if (WPC)
 	{
 		AWaitingPlayerState* WPS = WPC->GetPlayerState<AWaitingPlayerState>();
 		if (WPS)

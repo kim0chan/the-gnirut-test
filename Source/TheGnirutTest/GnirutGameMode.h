@@ -23,7 +23,7 @@ public:
 
 	virtual void StartPlay() override;
 
-	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void GenericPlayerInitialization(AController* C) override;
 
 	virtual void Logout(AController* Exiting) override;
 
