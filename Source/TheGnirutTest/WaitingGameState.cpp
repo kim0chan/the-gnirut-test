@@ -32,6 +32,10 @@ void AWaitingGameState::UpdateAllPlayerStates()
 {
 	AllPlayerStates.Empty();
 	for (APlayerState* PS : PlayerArray) {
+		if (!PS) {
+			UE_LOG(LogTemp, Error, TEXT("Cant find APlayerState* PS!! in AWaitingGameState"));
+			continue;
+		}
 		AllPlayerStates.Add(PS);
 	}
 
@@ -40,6 +44,17 @@ void AWaitingGameState::UpdateAllPlayerStates()
 }
 
 void AWaitingGameState::OnRep_AllPlayerState()
+{
+	if (AllPlayerStates.Num() != PlayerArray.Num()) {
+		UE_LOG(LogTemp, Error, TEXT("not yet!!"));
+		return;
+	}
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &AWaitingGameState::DelayedClientUpdatePlayerList, 0.5f, false);
+}
+
+void AWaitingGameState::DelayedClientUpdatePlayerList()
 {
 	// for client
 	UpdatePlayerList();

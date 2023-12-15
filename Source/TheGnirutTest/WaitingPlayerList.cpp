@@ -16,8 +16,12 @@ void UWaitingPlayerList::UpdatePlayerList()
 		if (WGS)
 		{
 			PlayerScrollBox->ClearChildren();
-			for (APlayerState* PS : WGS->PlayerArray)
+			for (APlayerState* PS : WGS->AllPlayerStates)
 			{
+				if (!PS) {
+					UE_LOG(LogTemp, Error, TEXT("Cant find APlayerState* PS!! in UWaitingPlayerList"));
+					continue;
+				}
 				AWaitingPlayerState* WPS = Cast<AWaitingPlayerState>(PS);
 				if (WPS)
 				{						

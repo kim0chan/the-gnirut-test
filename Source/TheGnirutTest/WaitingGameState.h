@@ -23,6 +23,8 @@ public:
 
 	void UpdateAllPlayerStates();
 
+	void DelayedClientUpdatePlayerList();
+
 	UFUNCTION()
 	void OnRep_AllPlayerState();
 
