@@ -207,7 +207,6 @@ void AGnirutHumanPlayer::MulticastAttack_Implementation()
 void AGnirutHumanPlayer::AttackCheck()
 {
 	if (!HasAuthority()) return;
-
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	bool bResult = GetWorld()->SweepSingleByChannel
