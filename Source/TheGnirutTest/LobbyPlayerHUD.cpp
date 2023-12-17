@@ -15,7 +15,16 @@ void ULobbyPlayerHUD::NativeConstruct()
 	JoinServerButton->OnClicked.AddDynamic(this, &ThisClass::OnJoinServerButtonClicked);
 	PlayerNameEditableTextBox->OnTextChanged.AddDynamic(this, &ThisClass::OnPlayerNameEditableTextBoxChanged);
 	JoinAddressEditableTextBox->SetHintText(FText::FromString("IP address to join in"));
+
+#if ENABLE_DRAW_DEBUG
 	JoinAddressEditableTextBox->SetText(FText::FromString("127.0.0.1"));
+#endif
+
+	UGnirutGameInstance* GGI = Cast<UGnirutGameInstance>(GetGameInstance());
+	if (GGI) {
+		FString playerName = GGI->GetPlayerName();
+		if (playerName != "") PlayerNameEditableTextBox->SetText(FText::FromString(playerName));
+	}
 }
 
 void ULobbyPlayerHUD::OnPlayerNameEditableTextBoxChanged(const FText& Text)
@@ -29,6 +38,8 @@ void ULobbyPlayerHUD::OnPlayerNameEditableTextBoxChanged(const FText& Text)
 
 void ULobbyPlayerHUD::OnHostServerButtonClicked()
 {
+	if (PlayerNameEditableTextBox->GetText().IsEmpty()) return;
+
 	ALobbyPlayerController* LPC = Cast<ALobbyPlayerController>(GetOwningPlayer());
 	if (LPC)
 	{
@@ -38,6 +49,8 @@ void ULobbyPlayerHUD::OnHostServerButtonClicked()
 
 void ULobbyPlayerHUD::OnJoinServerButtonClicked()
 {
+	if (PlayerNameEditableTextBox->GetText().IsEmpty()) return;
+
 	ALobbyPlayerController* LPC = Cast<ALobbyPlayerController>(GetOwningPlayer());
 	if (LPC)
 	{

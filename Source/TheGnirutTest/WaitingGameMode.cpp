@@ -51,9 +51,9 @@ void AWaitingGameMode::UpdatePlayerList()
 void AWaitingGameMode::CheckToTravelMainGame()
 {
 	AWaitingGameState* WGS = Cast<AWaitingGameState>(GameState);
-	if (WGS && WGS->isAllPlayersReady())
+	if (WGS)
 	{
-		TravelToMainGame();
+		if(WGS->isAllPlayersReady() && WGS->PlayerArray.Num() >= 2) TravelToMainGame();
 	}
 }
 
